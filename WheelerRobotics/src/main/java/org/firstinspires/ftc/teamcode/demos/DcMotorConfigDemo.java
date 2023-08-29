@@ -18,7 +18,7 @@ public class DcMotorConfigDemo extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         dash = FtcDashboard.getInstance();
-        motor = hardwareMap.get(DcMotorEx.class, "dcmotor");
+        motor = hardwareMap.get(DcMotorEx.class, "testMotor");
         waitForStart();
         while(opModeIsActive()) {
             motor.setPower(power);

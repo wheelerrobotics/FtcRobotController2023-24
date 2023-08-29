@@ -10,7 +10,7 @@ public class DcMotorControllerDemo extends LinearOpMode {
     public DcMotorEx motor = null;
     @Override
     public void runOpMode() throws InterruptedException {
-        motor = hardwareMap.get(DcMotorEx.class, "dcmotor");
+        motor = hardwareMap.get(DcMotorEx.class, "testMotor");
         waitForStart();
         while(opModeIsActive()) {
             power = gamepad1.left_stick_y;
