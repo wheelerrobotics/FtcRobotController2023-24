@@ -4,6 +4,7 @@ import static org.opencv.core.Core.inRange;
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2HSV;
 import static org.opencv.imgproc.Imgproc.boundingRect;
 import static org.opencv.imgproc.Imgproc.contourArea;
+import static org.opencv.imgproc.Imgproc.drawContours;
 
 import com.acmerobotics.dashboard.config.Config;
 
@@ -21,13 +22,13 @@ import java.util.List;
 
 @Config
 public class PropDetector extends OpenCvPipeline {
-    static public int hMax = 50;
-    static public int sMax = 255;
-    static public int lMax = 250;
+    static public int hMax = 12;
+    static public int sMax = 300;
+    static public int lMax = 400;
 
     static public int hMin = 0;
-    static public int sMin = 70;
-    static public int lMin = 50;
+    static public int sMin = 120;
+    static public int lMin = 0;
 
     @Override
     public void init(Mat input) {
@@ -44,7 +45,6 @@ public class PropDetector extends OpenCvPipeline {
         inRange(temp,low,high,mask);
         List<MatOfPoint> contours = new ArrayList<>();
         double maxArea = 0;
-        MatOfPoint cont = null;
         Mat hierarchey = new Mat();
         Imgproc.findContours(mask, contours, hierarchey, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
         List<Double> areas = new ArrayList<>();
@@ -53,32 +53,31 @@ public class PropDetector extends OpenCvPipeline {
         contours.forEach((c) -> areas.add(contourArea(c)));
 
         if (areas.size() > 2) {
-
+            List<MatOfPoint> conts = new ArrayList<>();
             Double obj = Collections.max(areas);
+            conts.add(contours.get(areas.indexOf(obj)));
+            Rect rect = boundingRect(contours.get(areas.indexOf(obj)));
             areas.remove(obj);
             Double obj2 = Collections.max(areas);
+            conts.add(contours.get(areas.indexOf(obj2)));
+            Rect rect2 = boundingRect(contours.get(areas.indexOf(obj2)));
             areas.remove(obj2);
             Double obj3 = Collections.max(areas);
+            conts.add(contours.get(areas.indexOf(obj3)));
+            Rect rect3 = boundingRect(contours.get(areas.indexOf(obj3)));
             areas.remove(obj3);
 
-            Rect cont1 = boundingRect(contours.get(areas.indexOf(obj)));
-            Rect cont2 = boundingRect(contours.get(areas.indexOf(obj2)));
-            Rect cont3 = boundingRect(contours.get(areas.indexOf(obj3)));
-
-            if (cont1.x > cont2.x && cont1.x > cont3.x) position = 3;
-            else if ((cont1.x > cont2.x && cont1.x < cont3.x) || (cont1.x > cont3.x && cont1.x < cont2.x)) position = 2;
-            else if (cont1.x < cont2.x && cont1.x < cont3.x) position = 1;
+            if (rect.x > rect2.x && rect.x > rect3.x) position = 3;
+            else if ((rect.x > rect2.x && rect.x < rect3.x) || (rect.x > rect3.x && rect.x < rect2.x)) position = 2;
+            else if (rect.x < rect2.x && rect.x < rect3.x) position = 1;
 
 
-
-            cont = contours.get(areas.indexOf(obj));
-            Rect rect = boundingRect(cont);
             Imgproc.circle(input, new Point(rect.x + rect.width/2, rect.y + rect.height/2), 30, new Scalar(0, 255, 255));
             Imgproc.putText(input, String.valueOf(position), new Point(100, 100), 1, 10, new Scalar(0, 0, 255));
-
+            drawContours(input, contours,-1, new Scalar(255, 0, 255), 2, Imgproc.LINE_8, hierarchey, 2, new Point() );
         }
 
-        //drawContours(input, contours,-1, new Scalar(255, 0, 255), 2, Imgproc.LINE_8, hierarchey, 2, new Point() );
+
 
         return input;
 
