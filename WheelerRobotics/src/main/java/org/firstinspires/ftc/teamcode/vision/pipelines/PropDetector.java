@@ -22,13 +22,36 @@ import java.util.List;
 
 @Config
 public class PropDetector extends OpenCvPipeline {
-    static public int hMax = 12;
+    /*static public int hMax = 12;
     static public int sMax = 300;
     static public int lMax = 400;
 
     static public int hMin = 0;
     static public int sMin = 120;
     static public int lMin = 0;
+    */
+
+    public int hMax, hMin, sMax, sMin, lMax, lMin;
+
+    public PropDetector(boolean notBlue) {
+        if (notBlue) {
+            hMax = 12;
+            sMax = 300;
+            lMax = 400;
+
+            hMin = 0;
+            sMin = 120;
+            lMin = 0;
+        } else {
+            hMax = 130;
+            sMax = 255;
+            lMax = 255;
+
+            hMin = 100;
+            sMin = 100;
+            lMin = 200;
+        }
+    }
 
     @Override
     public void init(Mat input) {

@@ -12,7 +12,7 @@ public class WebcamDemo extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // simple class for viewing camera feed and testing processors
-        bv.init(hardwareMap, new PropDetector());
+        bv.init(hardwareMap, new PropDetector(true));
         waitForStart();
         while (opModeIsActive()){
 
