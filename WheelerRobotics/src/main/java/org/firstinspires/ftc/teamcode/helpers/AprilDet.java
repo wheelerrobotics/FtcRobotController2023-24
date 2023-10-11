@@ -15,7 +15,7 @@ public class AprilDet {
 
     public ArrayList<AprilTagDetection> detections = new ArrayList<>();
     public BotVision bv = null;
-    public AprilTagDetectionPipeline atdp =  new AprilTagDetectionPipeline(0.166, 578.272, 578.272, 402.145, 221.506);
+    public AprilTagDetectionPipeline atdp =  new AprilTagDetectionPipeline(0.166, 1044.825321498012, 1044.6104225946867, 633.7313077534989, 329.2186566305057);
     int curConePos = 0;
     int numFramesWithoutDetection = 0;
     public static int DECIMATION_LOW = 5;

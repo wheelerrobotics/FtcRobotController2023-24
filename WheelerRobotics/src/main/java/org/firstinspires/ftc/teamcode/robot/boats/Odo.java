@@ -11,7 +11,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.ftccommon.SoundPlayer;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -19,12 +18,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.chassis.Meccanum.Meccanum;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.helpers.PID;
+import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.utility.Encoders;
 import org.firstinspires.ftc.teamcode.utility.Pose;
 import org.firstinspires.ftc.teamcode.vision.BotVision;
 import org.firstinspires.ftc.teamcode.vision.pipelines.AprilTagDetectionPipeline;
-import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.openftc.apriltag.AprilTagDetection;
 
 import java.util.ArrayList;
@@ -75,6 +75,8 @@ public class Odo extends Meccanum implements Robot {
     PIDThread pt = new PIDThread();
     SlideThread st = new SlideThread();
 
+    public SampleMecanumDrive rr = null;
+
     @Override
     public void init(HardwareMap hardwareMap) {
         super.init(hardwareMap);
@@ -82,11 +84,11 @@ public class Odo extends Meccanum implements Robot {
         // should be called before using class ALWAYS
 
         // internal IMU setup (copied and pasted, idk what it really does, but it works)
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        // BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        // parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
 
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
+        // imu = hardwareMap.get(BNO055IMU.class, "imu");
+        // imu.initialize(parameters);
         // angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
 
 
@@ -104,7 +106,7 @@ public class Odo extends Meccanum implements Robot {
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-
+        rr = new SampleMecanumDrive(hardwareMap);
 
 
         // define hw as the hardware map for possible access later in this class
@@ -118,6 +120,7 @@ public class Odo extends Meccanum implements Robot {
         st.start();
     }
     public void autoinit() {
+
         pt.encoders = new Encoders(0, 0, 0);
         pt.start();
 
