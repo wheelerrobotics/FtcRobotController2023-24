@@ -9,17 +9,20 @@ import org.firstinspires.ftc.teamcode.vision.pipelines.AprilTagDetectionPipeline
 import org.openftc.apriltag.AprilTagDetection;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 @Config
 public class AprilDet {
+    public static int exposureMillis = 10;
+    public static int gainMillis = 1;
 
     public ArrayList<AprilTagDetection> detections = new ArrayList<>();
     public BotVision bv = null;
     public AprilTagDetectionPipeline atdp =  new AprilTagDetectionPipeline(0.166, 1044.825321498012, 1044.6104225946867, 633.7313077534989, 329.2186566305057);
     int curConePos = 0;
     int numFramesWithoutDetection = 0;
-    public static int DECIMATION_LOW = 5;
-    public static int DECIMATION_HIGH = 5;
+    public static int DECIMATION_LOW = 1;
+    public static int DECIMATION_HIGH = 1;
     final float THRESHOLD_HIGH_DECIMATION_RANGE_METERS = 2.0f;
     final int THRESHOLD_NUM_FRAMES_NO_DETECTION_BEFORE_LOW_DECIMATION = 7;
 
@@ -31,11 +34,16 @@ public class AprilDet {
         bv.init(hw, atdp, webcamName);
 
 
+
     }
     public ArrayList<AprilTagDetection> getDetected(){
         return checkDetections();
     }
     public ArrayList<AprilTagDetection> checkDetections() {
+        bv.webcam.getExposureControl().setExposure(exposureMillis, TimeUnit.MILLISECONDS);
+        bv.webcam.getGainControl().setGain(gainMillis);
+
+
         detections = atdp.getDetectionsUpdate();
         if (detections != null) {
 
@@ -61,6 +69,9 @@ public class AprilDet {
             }
 
         }
+
+
+
         return detections;
     }
 

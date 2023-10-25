@@ -1,18 +1,24 @@
 package org.firstinspires.ftc.teamcode.helpers;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
-
+import java.util.concurrent.TimeUnit;
+@Config
 public class AprilDet2 {
+    public static int exposure = 0;
+    public static int gain = 0;
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
@@ -44,7 +50,6 @@ public class AprilDet2 {
 
         // Create the AprilTag processor the easy way.
         aprilTag = AprilTagProcessor.easyCreateWithDefaults();
-
         // Create the vision portal the easy way.
         if (USE_WEBCAM) {
             visionPortal = VisionPortal.easyCreateWithDefaults(
@@ -53,6 +58,7 @@ public class AprilDet2 {
             visionPortal = VisionPortal.easyCreateWithDefaults(
                     BuiltinCameraDirection.BACK, aprilTag);
         }
+        visionPortal.resumeLiveView();
 
     }   // end method initAprilTag()
 
@@ -68,6 +74,7 @@ public class AprilDet2 {
         return currentDetections;
     }
     private void telemetryAprilTag() {
+        setManualExposure(exposure, gain);
 
         currentDetections = aprilTag.getDetections();
         telemetry.addData("# AprilTags Detected", currentDetections.size());
@@ -92,4 +99,42 @@ public class AprilDet2 {
 
     }   // end method telemetryAprilTag()
 
+    private boolean    setManualExposure(int exposureMS, int gain) {
+        // Ensure Vision Portal has been setup.
+        if (visionPortal == null) {
+            return false;
+        }
+
+        // Wait for the camera to be open
+        if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+            telemetry.addData("Camera", "Waiting");
+            telemetry.update();
+            while ((visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+                //sleep(20);
+            }
+            telemetry.addData("Camera", "Ready");
+            telemetry.update();
+        }
+
+        // Set camera controls unless we are stopping.
+        //if (!isStopRequested())
+        //{
+            // Set exposure.  Make sure we are in Manual Mode for these values to take effect.
+            ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+            if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
+                exposureControl.setMode(ExposureControl.Mode.Manual);
+                //sleep(50);
+            }
+            exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
+            //sleep(20);
+
+            // Set Gain.
+            GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
+            gainControl.setGain(gain);
+            //sleep(20);
+            return (true);
+        //} else {
+        //    return (false);
+        //}
+    }
 }
