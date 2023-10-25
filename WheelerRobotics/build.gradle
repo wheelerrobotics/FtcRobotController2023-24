@@ -35,7 +35,5 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7'
 
 
-    implementation 'junit:junit:4.12'
-    implementation 'org.mockito:mockito-core:2.23.4'
     implementation 'org.openftc:apriltag:2.0.0'
 }

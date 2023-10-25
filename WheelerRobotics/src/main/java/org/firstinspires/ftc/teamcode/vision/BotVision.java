@@ -38,31 +38,6 @@ public class BotVision {
     Telemetry tele = dash.getTelemetry();
     public boolean inited = false;
 
-    public void init(HardwareMap hardwareMap, OpenCvPipeline pipeline, String webcamName) {
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, webcamName), cameraMonitorViewId);
-        webcam.setPipeline(pipeline);
-
-        webcam.setMillisecondsPermissionTimeout(2500); // Timeout for obtaining permission is configurable. Set before opening.
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-                webcam.getExposureControl().setMode(ExposureControl.Mode.Manual);
-                FtcDashboard.getInstance().startCameraStream(webcam, 20);
-                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-                tele.addLine("Opened!");
-                tele.update();
-            }
-
-            @Override
-            public void onError(int errorCode) {
-                tele.addData("Crashed", "camera");
-                tele.update();
-            }
-        });
-        inited = true;
-    }
-
     public void init(HardwareMap hardwareMap, OpenCvPipeline pipeline) {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -72,6 +47,7 @@ public class BotVision {
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
+                webcam.getExposureControl().setMode(ExposureControl.Mode.Manual);
                 FtcDashboard.getInstance().startCameraStream(webcam, 20);
                 webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                 tele.addLine("Opened!");
