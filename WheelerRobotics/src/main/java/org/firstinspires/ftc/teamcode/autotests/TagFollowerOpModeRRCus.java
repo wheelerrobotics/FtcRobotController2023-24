@@ -23,6 +23,7 @@ import java.util.List;
 @Config
 public class TagFollowerOpModeRRCus extends LinearOpMode {
     public static double targetThresh = 0.05;
+    public static double aaronsVariable = 0.1;
     public static double targetX = -1.97;
     public static double targetZ = 4.1;
     public static double targetID = 1;
