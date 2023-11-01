@@ -39,6 +39,7 @@ public class BotVision {
     OpenCvPipeline pipeline;
     public boolean inited = false;
 
+
     public void init(HardwareMap hardwareMap, OpenCvPipeline pipeline) {
         this.pipeline = pipeline;
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
