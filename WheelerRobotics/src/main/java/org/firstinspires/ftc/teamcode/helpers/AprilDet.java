@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.teamcode.vision.BotVision;
 import org.firstinspires.ftc.teamcode.vision.pipelines.AprilTagDetectionPipeline;
 import org.openftc.apriltag.AprilTagDetection;
@@ -31,7 +32,7 @@ public class AprilDet {
         ElapsedTime et = new ElapsedTime();
         et.reset();
         while (et.milliseconds() < 500);
-        bv.init(hw, atdp, webcamName);
+        bv.init(hw, atdp);
 
 
 
@@ -40,6 +41,7 @@ public class AprilDet {
         return checkDetections();
     }
     public ArrayList<AprilTagDetection> checkDetections() {
+        bv.webcam.getExposureControl().setMode(ExposureControl.Mode.Manual);
         bv.webcam.getExposureControl().setExposure(exposureMillis, TimeUnit.MILLISECONDS);
         bv.webcam.getGainControl().setGain(gainMillis);
 
