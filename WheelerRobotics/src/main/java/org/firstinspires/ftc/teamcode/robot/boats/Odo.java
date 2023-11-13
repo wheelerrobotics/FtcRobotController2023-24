@@ -14,6 +14,7 @@ import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
@@ -77,6 +78,11 @@ public class Odo extends Meccanum implements Robot {
 
     public SampleMecanumDrive rr = null;
 
+    Servo hand = null;
+
+    public void setHandPos(double position) {
+        hand.setPosition(position);
+    }
     @Override
     public void init(HardwareMap hardwareMap) {
         super.init(hardwareMap);
@@ -105,6 +111,8 @@ public class Odo extends Meccanum implements Robot {
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        hand = hardwareMap.servo.get("hand");
 
         rr = new SampleMecanumDrive(hardwareMap);
 
