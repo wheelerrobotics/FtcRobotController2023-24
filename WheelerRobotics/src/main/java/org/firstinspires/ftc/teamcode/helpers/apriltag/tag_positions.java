@@ -10,21 +10,21 @@ public class tag_positions {
 
 
 public static final
-    global_position left_tag_red = setting_global_position.set_global_position(29.5 , 60 , board_tag_z , 0 , 0 , 30 , 4);
+    global_position left_tag_red = setting_global_position.set_global_position(29.5 , 60 , board_tag_z , 30 , 0 , 0 , 4);
 public static final
-    global_position center_tag_red = setting_global_position.set_global_position(-5 ,60 ,board_tag_z , 0 , 0 , 30 , 5);
+    global_position center_tag_red = setting_global_position.set_global_position(35.5 ,60 ,board_tag_z , 30 , 0 , 0 , 5);
 public static final
-    global_position right_tag_red = setting_global_position.set_global_position(-5 , 60 , board_tag_z , 0 , 0 , 30 , 6);
+    global_position right_tag_red = setting_global_position.set_global_position(41.5 , 60 , board_tag_z , 30 , 0 , 0 , 6);
 public static final
-    global_position left_tag_blue = setting_global_position.set_global_position(-5 , 60 , board_tag_z , 0 , 0 , 30 , 1);
+    global_position left_tag_blue = setting_global_position.set_global_position(-41.5 , 60 , board_tag_z , 30 , 0 , 0 , 1);
 public static final
-    global_position center_tag_blue = setting_global_position.set_global_position(-5 , 60 , board_tag_z , 0 , 0 , 30  ,2);
+    global_position center_tag_blue = setting_global_position.set_global_position(-35.5 , 60 , board_tag_z , 30 , 0 , 0  ,2);
 public static final
-    global_position right_tag_blue = setting_global_position.set_global_position(-5 , 60 , board_tag_z , 0 , 0 , 30 , 3);
+    global_position right_tag_blue = setting_global_position.set_global_position(-29.5 , 60 , board_tag_z , 30 , 0 , 0 , 3);
 public static final
-    global_position wall_tag_left = setting_global_position.set_global_position(-5 , -60 , wall_tag_z , 0 , 0 , 30 , 7);
+    global_position wall_tag_left = setting_global_position.set_global_position(-5 , -60 , wall_tag_z , 0 , 0 , 0 , 7);
 public static final
-    global_position wall_tag_right = setting_global_position.set_global_position(-5 , -60 , wall_tag_z , 0 , 0 , 30 , 8);
+    global_position wall_tag_right = setting_global_position.set_global_position(-5 , -60 , wall_tag_z , 0 , 0 , 0 , 8);
 
 
 
