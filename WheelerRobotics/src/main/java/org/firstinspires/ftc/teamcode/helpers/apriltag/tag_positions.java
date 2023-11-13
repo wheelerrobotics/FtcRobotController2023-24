@@ -10,7 +10,7 @@ public class tag_positions {
 
 
 public static final
-    global_position left_tag_red = setting_global_position.set_global_position(-5 , 60 , board_tag_z , 0 , 0 , 30 , 4);
+    global_position left_tag_red = setting_global_position.set_global_position(29.5 , 60 , board_tag_z , 0 , 0 , 30 , 4);
 public static final
     global_position center_tag_red = setting_global_position.set_global_position(-5 ,60 ,board_tag_z , 0 , 0 , 30 , 5);
 public static final
