@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.helpers.apriltag;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -14,10 +13,9 @@ public class Globalpositioning {
 
     public static AngleUnit outputUnitsAngle = AngleUnit.RADIANS;
 
-    public HardwareMap hw = null;
 
-    public Globalpositioning(HardwareMap hardwareMap) { //learn this syntax
-        hw = hardwareMap;
+    public Globalpositioning() { //learn this syntax
+
     }
 
     public static Pose2d globalPositionToPose(global_position position) {

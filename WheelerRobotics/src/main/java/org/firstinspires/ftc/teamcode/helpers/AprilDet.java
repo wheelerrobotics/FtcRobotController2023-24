@@ -31,7 +31,7 @@ public class AprilDet {
         ElapsedTime et = new ElapsedTime();
         et.reset();
         while (et.milliseconds() < 500);
-        bv.init(hw, atdp, webcamName);
+        bv.init(hw, atdp);
 
 
 
