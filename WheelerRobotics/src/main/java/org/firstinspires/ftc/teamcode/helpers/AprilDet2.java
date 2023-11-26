@@ -49,7 +49,9 @@ public class AprilDet2 {
     private void initAprilTag(HardwareMap hardwareMap) {
 
         // Create the AprilTag processor the easy way.
-        aprilTag = AprilTagProcessor.easyCreateWithDefaults();
+
+        aprilTag = new AprilTagProcessor.Builder().setLensIntrinsics(1044.825321498012, 1044.6104225946867, 633.7313077534989, 329.2186566305057)
+                .build();
         // Create the vision portal the easy way.
         if (USE_WEBCAM) {
             visionPortal = VisionPortal.easyCreateWithDefaults(
@@ -86,6 +88,8 @@ public class AprilDet2 {
                 telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
                 telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
                 telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
+                FtcDashboard.getInstance().getTelemetry().addLine(String.format("XYR %6.1f %6.1f %6.1f  (inch, inch, deg)", detection.ftcPose.range*Math.sin(detection.ftcPose.yaw - detection.ftcPose.bearing), detection.ftcPose.range*Math.cos(detection.ftcPose.yaw - detection.ftcPose.bearing), detection.ftcPose.yaw));
+                FtcDashboard.getInstance().getTelemetry().update();
             } else {
                 telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
                 telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));

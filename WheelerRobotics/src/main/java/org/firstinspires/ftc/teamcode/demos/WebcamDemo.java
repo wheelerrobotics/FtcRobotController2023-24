@@ -20,14 +20,14 @@ public class WebcamDemo extends LinearOpMode {
     public static double d = 0;
     public static double r = 3;
     public static double x = 1;
-    public static double y = 3.2216;
+    public static double y = 1;//3.2216;
     public static double xp = 0;
-    public static double yp = -131.3;
+    public static double yp = 0;//-131.3;
     private BotVision bv = new BotVision();
     @Override
     public void runOpMode() throws InterruptedException {
         // simple class for viewing camera feed and testing processors
-            GlobalPositionPipeline gpp = new GlobalPositionPipeline(0.166, 1044.825321498012, 1044.6104225946867, 633.7313077534989, 329.2186566305057);
+            GlobalPositionPipeline gpp = new GlobalPositionPipeline(0.050, 1044.825321498012, 1044.6104225946867, 633.7313077534989, 329.2186566305057);
             bv.init(hardwareMap, gpp);
             double lastx=0;
             double lasty=0;

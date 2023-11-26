@@ -135,19 +135,22 @@ public class GlobalPositionPipeline extends OpenCvPipeline
 
         // For fun, use OpenCV to draw 6DOF markers on the image. We actually recompute the pose using
         // OpenCV because I haven't yet figured out how to re-use AprilTag's pose in OpenCV.
-        for(AprilTagDetection detection : detections)
-        {
+        for(AprilTagDetection detection : detections) {
             Pose pose = poseFromTrapezoid(detection.corners, cameraMatrix, tagsizeX, tagsizeY);
-            drawAxisMarker(grey, tagsizeY/2.0, 6, pose.rvec, pose.tvec, cameraMatrix);
+            drawAxisMarker(grey, tagsizeY / 2.0, 6, pose.rvec, pose.tvec, cameraMatrix);
             draw3dCubeMarker(grey, tagsizeX, tagsizeX, tagsizeY, 5, pose.rvec, pose.tvec, cameraMatrix);
 
-            if (detection.id == 2) {
+            if (detection.id == 5) {
                 global_position gp = find_global_pose(detection);
+                if (gp == null) {
+                    curpos = null;
+                }else {
+                    curpos = new Pose2d(gp.global_x, gp.global_y, gp.rotation_z);
+                }
 
-                curpos = new Pose2d(gp.global_x, gp.global_y, gp.rotation_z);
+
             }
         }
-
 
 
 

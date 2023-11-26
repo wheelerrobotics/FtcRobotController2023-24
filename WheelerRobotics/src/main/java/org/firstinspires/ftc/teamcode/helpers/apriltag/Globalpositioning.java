@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.helpers.apriltag;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -74,6 +75,21 @@ public class Globalpositioning {
             tag_detected = tag_positions.wall_tag_right;
         }
 
+        if (ftcPose.yaw>0.5) return null;
+        FtcDashboard.getInstance().getTelemetry().addData("x", ftcPose.x);
+        FtcDashboard.getInstance().getTelemetry().addData("y", ftcPose.y);
+        FtcDashboard.getInstance().getTelemetry().addData("z", ftcPose.z);
+        FtcDashboard.getInstance().getTelemetry().addData("yaw", ftcPose.yaw);
+        FtcDashboard.getInstance().getTelemetry().addData("pitch", ftcPose.pitch);
+        FtcDashboard.getInstance().getTelemetry().addData("roll", ftcPose.roll);
+        FtcDashboard.getInstance().getTelemetry().addData("bearing", ftcPose.bearing-0.4);
+        FtcDashboard.getInstance().getTelemetry().addData("range", ftcPose.range);
+        FtcDashboard.getInstance().getTelemetry().addData("elevation", ftcPose.elevation);
+        FtcDashboard.getInstance().getTelemetry().addData("Gy", ftcPose.range * Math.cos(ftcPose.yaw - ftcPose.bearing-0.4));
+        FtcDashboard.getInstance().getTelemetry().addData("Gx", ftcPose.range * Math.sin(ftcPose.yaw - ftcPose.bearing-0.4));
+        FtcDashboard.getInstance().getTelemetry().addData("Gr", ftcPose.yaw);
+
+        FtcDashboard.getInstance().getTelemetry().update();
 
         bot_position.global_y = (tag_detected.global_y - ftcPose.range * Math.cos(Math.toRadians(ftcPose.bearing + ftcPose.yaw)));
         bot_position.global_x = (tag_detected.global_x - ftcPose.range * Math.sin(Math.toRadians(ftcPose.bearing + ftcPose.yaw)));
@@ -81,6 +97,8 @@ public class Globalpositioning {
         bot_position.rotation_z = (tag_detected.rotation_z + ftcPose.yaw);
         bot_position.rotation_y = (tag_detected.rotation_y + ftcPose.roll);
         bot_position.rotation_x = (tag_detected.rotation_x + ftcPose.pitch);
+
+
         bot_position.id = 252;
 
 
