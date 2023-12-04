@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.helpers.apriltag;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -73,6 +75,13 @@ public class Globalpositioning {
         if (detected_id == tag_positions.wall_tag_right.id) {
             tag_detected = tag_positions.wall_tag_right;
         }
+
+        telemetry.addData("range" , String.valueOf(ftcPose.range));
+        telemetry.addData("bearing" , String.valueOf(ftcPose.bearing));
+        telemetry.addData("yaw" , String.valueOf(ftcPose.yaw));
+        telemetry.addData("roll" , String.valueOf(ftcPose.roll));
+
+
 
 
         bot_position.global_y = (tag_detected.global_y - ftcPose.range * Math.cos(Math.toRadians(ftcPose.bearing + ftcPose.yaw)));
