@@ -28,6 +28,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.teamcode.vision.pipelines.GlobalPositionPipeline;
+import org.firstinspires.ftc.teamcode.vision.pipelines.PropDetector;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -38,22 +39,23 @@ public class BotVision {
     public OpenCvWebcam webcam;
     FtcDashboard dash = FtcDashboard.getInstance();
     Telemetry tele = dash.getTelemetry();
+    OpenCvPipeline pipeline;
     public boolean inited = false;
     OpenCvPipeline p = null;
 
+
     public void init(HardwareMap hardwareMap, OpenCvPipeline pipeline) {
+        this.pipeline = pipeline;
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        p = pipeline;
-        webcam.setPipeline(pipeline);
+        webcam.setPipeline(this.pipeline);
 
         webcam.setMillisecondsPermissionTimeout(2500); // Timeout for obtaining permission is configurable. Set before opening.
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                webcam.getExposureControl().setMode(ExposureControl.Mode.Manual);
                 FtcDashboard.getInstance().startCameraStream(webcam, 20);
-                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
                 tele.addLine("Opened!");
                 tele.update();
             }
@@ -70,6 +72,9 @@ public class BotVision {
         return ((GlobalPositionPipeline) p).getCurpos();
     }
 
+    public int getPos() {
+        return ((PropDetector) pipeline).getPos();
+    }
 
 
 }

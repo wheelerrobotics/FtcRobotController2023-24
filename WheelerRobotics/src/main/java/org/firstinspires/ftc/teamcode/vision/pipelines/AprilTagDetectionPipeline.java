@@ -54,15 +54,15 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline
     Scalar green = new Scalar(0,255,0,255);
     Scalar white = new Scalar(255,255,255,255);
 
-    double fx;
-    double fy;
-    double cx;
-    double cy;
+    public static double fx;
+    public static double fy;
+    public static double cx;
+    public static double cy;
 
     // UNITS ARE METERS
-    double tagsize;
-    double tagsizeX;
-    double tagsizeY;
+    public static double tagsize;
+    public static double tagsizeX;
+    public static double tagsizeY;
 
     private float decimation;
     private boolean needToSetDecimation;
