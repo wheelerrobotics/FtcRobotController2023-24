@@ -75,8 +75,8 @@ public class Globalpositioning {
             tag_detected = tag_positions.wall_tag_right;
         }
 
-        bot_position.global_y = (tag_detected.global_y - (ftcPose.range * 1/0.0254) * Math.cos(ftcPose.elevation) * Math.sin(ftcPose.yaw));
-        bot_position.global_x = (tag_detected.global_x - (ftcPose.range * 1/0.0254) * Math.cos(ftcPose.elevation) * Math.cos(ftcPose.yaw));
+        bot_position.global_y = (tag_detected.global_y - ((ftcPose.range * 1/0.0254) * Math.cos(ftcPose.elevation) * Math.cos(ftcPose.yaw - ftcPose.bearing)));
+        bot_position.global_x = (tag_detected.global_x - (ftcPose.range * 1/0.0254) * Math.cos(ftcPose.elevation) * Math.sin(ftcPose.yaw - ftcPose.bearing));
 
         bot_position.global_z = (mounted_z_cam - (tag_detected.global_z + (ftcPose.range * 1/0.0254) * Math.sin(ftcPose.elevation))); // is this right?
 

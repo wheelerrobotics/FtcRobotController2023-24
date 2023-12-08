@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.helpers.AprilDet;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 @TeleOp
 @Config
 public class WebcamDemo extends LinearOpMode {
+    public static int tagID = 1;
     public static double d = 0;
     public static double r = 3;
     public static double x = 1;
@@ -25,26 +27,44 @@ public class WebcamDemo extends LinearOpMode {
     public static double xp = 0;
     public static double yp = 0;//-131.3;
     private BotVision bv = new BotVision();
+    global_position gp;
     @Override
     public void runOpMode() throws InterruptedException {
         Telemetry tele = FtcDashboard.getInstance().getTelemetry();
         Odo o = new Odo();
+        o.init(hardwareMap);
         // simple class for viewing camera feed and testing processors
         AprilDet ad = new AprilDet();
         ad.init(hardwareMap, "Webcam 1");
+        o.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         waitForStart();
 
-
         while (opModeIsActive()) {
-            o.motorDriveXYVectors(gamepad1);
+            o.motorDriveXYVectors(gamepad1.left_stick_x,-gamepad1.left_stick_y,gamepad1.right_stick_x);
             ArrayList<AprilTagDetection> dets = ad.getDetected();
             if (dets == null) continue;
+            double totalX = 0;
+            double totalY = 0;
+            double totalR = 0;
             for (AprilTagDetection i : dets) {
-                global_position gp = Globalpositioning.find_global_pose(i);
-
+                tele.addData("tag"+i.id+": ", i.id);
+                gp = Globalpositioning.find_global_pose(i);
+                totalX += gp.global_x;
+                totalY += gp.global_y;
+                totalR += gp.rotation_z;
             }
+            double avgX = totalX/dets.size();
+            double avgY = totalY/dets.size();
+            double avgR = totalR/dets.size();
 
+            tele.addData("x", avgX);
+            tele.addData("y", avgY);
+            tele.addData("r", avgR);
+            tele.update();
         }
+
+        bv.webcam.closeCameraDevice();
+
 
     }
 }

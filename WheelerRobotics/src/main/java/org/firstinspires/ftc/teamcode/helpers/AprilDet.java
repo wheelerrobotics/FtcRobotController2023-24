@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 @Config
 public class AprilDet {
-    public static int exposureMillis = 2;
+    public static int exposureMillis = 500;
     public static int gainMillis = 1;
 
     public ArrayList<AprilTagDetection> detections = new ArrayList<>();
