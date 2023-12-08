@@ -21,10 +21,13 @@ package org.firstinspires.ftc.teamcode.vision;
  */
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.teamcode.vision.pipelines.GlobalPositionPipeline;
 import org.firstinspires.ftc.teamcode.vision.pipelines.PropDetector;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -38,6 +41,7 @@ public class BotVision {
     Telemetry tele = dash.getTelemetry();
     OpenCvPipeline pipeline;
     public boolean inited = false;
+    OpenCvPipeline p = null;
 
 
     public void init(HardwareMap hardwareMap, OpenCvPipeline pipeline) {
@@ -64,6 +68,10 @@ public class BotVision {
         });
         inited = true;
     }
+    public Pose2d getLoc() {
+        return ((GlobalPositionPipeline) p).getCurpos();
+    }
+
     public int getPos() {
         return ((PropDetector) pipeline).getPos();
     }

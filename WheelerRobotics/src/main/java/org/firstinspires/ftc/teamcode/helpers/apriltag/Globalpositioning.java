@@ -79,6 +79,7 @@ public class Globalpositioning {
         bot_position.global_x = (tag_detected.global_x - (ftcPose.range * 1/0.0254) * Math.cos(ftcPose.elevation) * Math.cos(ftcPose.yaw));
 
         bot_position.global_z = (mounted_z_cam - (tag_detected.global_z + (ftcPose.range * 1/0.0254) * Math.sin(ftcPose.elevation))); // is this right?
+
         bot_position.rotation_z = (tag_detected.rotation_z + ftcPose.yaw);
         bot_position.rotation_y = (tag_detected.rotation_y + ftcPose.roll);
         bot_position.rotation_x = (tag_detected.rotation_x + ftcPose.pitch);
