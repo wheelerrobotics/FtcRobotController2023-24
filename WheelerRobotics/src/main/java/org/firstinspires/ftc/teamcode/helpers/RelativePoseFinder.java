@@ -11,7 +11,6 @@ public class RelativePoseFinder {
     public static AngleUnit outputUnitsAngle = AngleUnit.RADIANS;
     public static AprilTagPoseFtc findPose(AprilTagDetection detection) {
         AprilTagPoseFtc ftcPose = new AprilTagPoseFtc();
-
         ftcPose.x =  detection.pose.x;
         ftcPose.y =  detection.pose.z;
         ftcPose.z = -detection.pose.y;

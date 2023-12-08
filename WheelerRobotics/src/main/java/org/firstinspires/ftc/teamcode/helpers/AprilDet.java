@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.teamcode.vision.BotVision;
 import org.firstinspires.ftc.teamcode.vision.pipelines.AprilTagDetectionPipeline;
 import org.openftc.apriltag.AprilTagDetection;
@@ -13,16 +14,17 @@ import java.util.concurrent.TimeUnit;
 
 @Config
 public class AprilDet {
-    public static int exposureMillis = 10;
+    public static int exposureMillis = 2;
     public static int gainMillis = 1;
 
     public ArrayList<AprilTagDetection> detections = new ArrayList<>();
     public BotVision bv = null;
-    public AprilTagDetectionPipeline atdp =  new AprilTagDetectionPipeline(0.166, 1044.825321498012, 1044.6104225946867, 633.7313077534989, 329.2186566305057);
+    public AprilTagDetectionPipeline atdp =  new AprilTagDetectionPipeline(0.05, 672.384, 672.384, 322.894, 253.854);
+    // these are the intrinsics for the microsoft lifecam HD 3000, running at 640x480 resolution
     int curConePos = 0;
     int numFramesWithoutDetection = 0;
-    public static int DECIMATION_LOW = 1;
-    public static int DECIMATION_HIGH = 1;
+    public static int DECIMATION_LOW = -1;
+    public static int DECIMATION_HIGH = -1;
     final float THRESHOLD_HIGH_DECIMATION_RANGE_METERS = 2.0f;
     final int THRESHOLD_NUM_FRAMES_NO_DETECTION_BEFORE_LOW_DECIMATION = 7;
 
@@ -30,7 +32,7 @@ public class AprilDet {
         bv = new BotVision();
         ElapsedTime et = new ElapsedTime();
         et.reset();
-        while (et.milliseconds() < 500);
+        while (et.milliseconds() < 500); // THIS MIGHT BREAK IF IT GETS COMMENTED BUT TRY ANYWAY
         bv.init(hw, atdp);
 
 
@@ -40,7 +42,8 @@ public class AprilDet {
         return checkDetections();
     }
     public ArrayList<AprilTagDetection> checkDetections() {
-        bv.webcam.getExposureControl().setExposure(exposureMillis, TimeUnit.MILLISECONDS);
+        bv.webcam.getExposureControl().setMode(ExposureControl.Mode.Manual);
+        bv.webcam.getExposureControl().setExposure(exposureMillis, TimeUnit.MICROSECONDS);
         bv.webcam.getGainControl().setGain(gainMillis);
 
 
