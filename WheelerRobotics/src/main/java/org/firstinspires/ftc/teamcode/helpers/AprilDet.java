@@ -19,7 +19,8 @@ public class AprilDet {
 
     public ArrayList<AprilTagDetection> detections = new ArrayList<>();
     public BotVision bv = null;
-    public AprilTagDetectionPipeline atdp =  new AprilTagDetectionPipeline(0.166, 1044.825321498012, 1044.6104225946867, 633.7313077534989, 329.2186566305057);
+    public AprilTagDetectionPipeline atdp =  new AprilTagDetectionPipeline(0.05, 672.384, 672.384, 322.894, 253.854);
+    // these are the intrinsics for the microsoft lifecam HD 3000, running at 640x480 resolution
     int curConePos = 0;
     int numFramesWithoutDetection = 0;
     public static int DECIMATION_LOW = -1;
@@ -31,7 +32,7 @@ public class AprilDet {
         bv = new BotVision();
         ElapsedTime et = new ElapsedTime();
         et.reset();
-        while (et.milliseconds() < 500);
+        while (et.milliseconds() < 500); // THIS MIGHT BREAK IF IT GETS COMMENTED BUT TRY ANYWAY
         bv.init(hw, atdp);
 
 
@@ -42,7 +43,7 @@ public class AprilDet {
     }
     public ArrayList<AprilTagDetection> checkDetections() {
         bv.webcam.getExposureControl().setMode(ExposureControl.Mode.Manual);
-        bv.webcam.getExposureControl().setExposure(exposureMillis, TimeUnit.MILLISECONDS);
+        bv.webcam.getExposureControl().setExposure(exposureMillis, TimeUnit.MICROSECONDS);
         bv.webcam.getGainControl().setGain(gainMillis);
 
 

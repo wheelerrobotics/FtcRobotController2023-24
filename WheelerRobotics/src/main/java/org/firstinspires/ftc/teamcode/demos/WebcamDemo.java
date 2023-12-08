@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.demos;
 
+import static org.firstinspires.ftc.teamcode.helpers.RelativePoseFinder.findPose;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -11,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.helpers.AprilDet;
 import org.firstinspires.ftc.teamcode.vision.BotVision;
+import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.openftc.apriltag.AprilTagDetection;
 
 import java.util.ArrayList;
@@ -40,9 +43,22 @@ public class WebcamDemo extends LinearOpMode {
                         tele.addData("pose x", i.pose.x);
                         tele.addData("pose y", i.pose.y);
                         Orientation orientation = Orientation.getOrientation(i.pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.RADIANS);
-                        tele.addData("pose firstAngle", orientation.firstAngle);
-                        tele.addData("pose secondAngle", orientation.secondAngle);
-                        tele.addData("pose thirdAngle", orientation.thirdAngle);
+                        tele.addData("pose firstAngle", orientation.firstAngle); // rl
+                        tele.addData("pose secondAngle", orientation.secondAngle); // updown
+                        tele.addData("pose thirdAngle", orientation.thirdAngle); // roll
+
+                        AprilTagPoseFtc ftcDet = findPose(i);
+                        tele.addData("supposed x", ftcDet.x);
+                        tele.addData("supposed y", ftcDet.y);
+                        tele.addData("supposed z", ftcDet.z);
+                        tele.addData("supposed roll", ftcDet.roll);
+                        tele.addData("supposed pitch", ftcDet.pitch);
+                        tele.addData("supposed yaw", ftcDet.yaw);
+                        tele.addData("supposed range", ftcDet.range * 1/0.0254); //53.75/0.533 far 34/0.344
+                        tele.addData("supposed x offset", (ftcDet.range * 1/0.0254) * Math.cos(ftcDet.elevation) * Math.cos(ftcDet.yaw));
+                        tele.addData("supposed z offset", (ftcDet.range * 1/0.0254) * Math.cos(ftcDet.elevation) * Math.sin(ftcDet.yaw));
+                        tele.addData("supposed bearing", ftcDet.bearing);
+                        tele.addData("supposed elevation", ftcDet.elevation);
                         tele.update();
                     }
             }
