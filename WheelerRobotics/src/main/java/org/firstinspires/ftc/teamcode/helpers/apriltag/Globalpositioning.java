@@ -74,7 +74,7 @@ public class Globalpositioning {
         if (detected_id == tag_positions.wall_tag_right.id) {
             tag_detected = tag_positions.wall_tag_right;
         }
-
+        bot_position.range = ftcPose.range;
         bot_position.global_y = (tag_detected.global_y - ((ftcPose.range * 1/0.0254) * Math.cos(ftcPose.elevation) * Math.cos(ftcPose.yaw - ftcPose.bearing)));
         bot_position.global_x = (tag_detected.global_x - (ftcPose.range * 1/0.0254) * Math.cos(ftcPose.elevation) * Math.sin(ftcPose.yaw - ftcPose.bearing));
 

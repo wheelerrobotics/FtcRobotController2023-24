@@ -7,6 +7,7 @@ public class global_position {
         public double rotation_x;
         public double rotation_y;
         public double rotation_z;
+        public double range;
         public double id;
 
 
