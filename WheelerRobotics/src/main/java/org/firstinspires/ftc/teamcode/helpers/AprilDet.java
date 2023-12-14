@@ -18,7 +18,7 @@ public class AprilDet {
     public static int gainMillis = 1;
 
     public ArrayList<AprilTagDetection> detections = new ArrayList<>();
-    public BotVision bv = null;
+    public BotVision bv = new BotVision();
     public AprilTagDetectionPipeline atdp =  new AprilTagDetectionPipeline(0.05, 672.384, 672.384, 322.894, 253.854);
     // these are the intrinsics for the microsoft lifecam HD 3000, running at 640x480 resolution
     int curConePos = 0;
@@ -29,11 +29,11 @@ public class AprilDet {
     final int THRESHOLD_NUM_FRAMES_NO_DETECTION_BEFORE_LOW_DECIMATION = 7;
 
     public void init(HardwareMap hw, String webcamName) {
-        bv = new BotVision();
+        bv.init(hw, atdp);
         ElapsedTime et = new ElapsedTime();
         et.reset();
-        while (et.milliseconds() < 500); // THIS MIGHT BREAK IF IT GETS COMMENTED BUT TRY ANYWAY
-        bv.init(hw, atdp);
+        //while (et.milliseconds() < 500); // THIS MIGHT BREAK IF IT GETS COMMENTED BUT TRY ANYWAY
+
 
 
 

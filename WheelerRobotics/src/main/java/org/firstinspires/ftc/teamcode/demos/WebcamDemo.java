@@ -46,20 +46,31 @@ public class WebcamDemo extends LinearOpMode {
             double totalX = 0;
             double totalY = 0;
             double totalR = 0;
+            double totalRX = 0;
+            double totalRY = 0;
+            double totalZ = 0;
             for (AprilTagDetection i : dets) {
-                tele.addData("tag"+i.id+": ", i.id);
                 gp = Globalpositioning.find_global_pose(i);
                 totalX += gp.global_x;
                 totalY += gp.global_y;
                 totalR += gp.rotation_z;
+                totalRX += gp.rotation_x;
+                totalRY += gp.rotation_y;
+                totalZ += gp.global_z;
             }
             double avgX = totalX/dets.size();
             double avgY = totalY/dets.size();
             double avgR = totalR/dets.size();
+            double avgRX = totalRX/dets.size();
+            double avgRY = totalRY/dets.size();
+            double avgZ = totalZ/dets.size();
 
             tele.addData("x", avgX);
             tele.addData("y", avgY);
             tele.addData("r", avgR);
+            tele.addData("z", avgZ);
+            tele.addData("rx", avgRX);
+            tele.addData("ry", avgRY);
             tele.update();
         }
 
