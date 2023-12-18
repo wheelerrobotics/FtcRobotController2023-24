@@ -37,11 +37,17 @@ public class WebcamDemo extends LinearOpMode {
         AprilDet ad = new AprilDet();
         ad.init(hardwareMap, "Webcam 1");
         o.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        tele.addData("DEBUG", "inited");
+        tele.update();
         waitForStart();
 
         while (opModeIsActive()) {
             o.motorDriveXYVectors(gamepad1.left_stick_x,-gamepad1.left_stick_y,gamepad1.right_stick_x);
+            tele.addData("DEBUG", "vectors");
+            tele.update();
             ArrayList<AprilTagDetection> dets = ad.getDetected();
+            tele.addData("DEBUG", "detected");
+            tele.update();
             if (dets == null) continue;
             double totalX = 0;
             double totalY = 0;

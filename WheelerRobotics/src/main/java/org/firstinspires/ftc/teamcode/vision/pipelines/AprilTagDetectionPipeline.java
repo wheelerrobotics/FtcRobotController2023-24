@@ -104,7 +104,8 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline
     public Mat processFrame(Mat input)
     {
         // Convert to greyscale
-        Imgproc.cvtColor(input, grey, Imgproc.COLOR_RGBA2GRAY);
+        Imgproc.cvtColor(input, grey, Imgproc.COLOR_RGB2GRAY);
+        //grey = input;
 
         synchronized (decimationSync)
         {
@@ -128,11 +129,11 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline
         for(AprilTagDetection detection : detections)
         {
             Pose pose = poseFromTrapezoid(detection.corners, cameraMatrix, tagsizeX, tagsizeY);
-            drawAxisMarker(grey, tagsizeY/2.0, 6, pose.rvec, pose.tvec, cameraMatrix);
-            draw3dCubeMarker(grey, tagsizeX, tagsizeX, tagsizeY, 5, pose.rvec, pose.tvec, cameraMatrix);
+            drawAxisMarker(input, tagsizeY/2.0, 6, pose.rvec, pose.tvec, cameraMatrix);
+            draw3dCubeMarker(input, tagsizeX, tagsizeX, tagsizeY, 5, pose.rvec, pose.tvec, cameraMatrix);
         }
 
-        return grey;
+        return input;
     }
 
     public void setDecimation(float decimation)
