@@ -7,10 +7,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.helpers.AprilDet;
+import org.firstinspires.ftc.teamcode.helpers.PropAprilDet;
 import org.firstinspires.ftc.teamcode.helpers.apriltag.Globalpositioning;
 import org.firstinspires.ftc.teamcode.helpers.apriltag.global_position;
-import org.firstinspires.ftc.teamcode.robot.boats.Odo;
+import org.firstinspires.ftc.teamcode.robot.boats.Bert;
 import org.firstinspires.ftc.teamcode.vision.BotVision;
 import org.openftc.apriltag.AprilTagDetection;
 
@@ -31,18 +31,20 @@ public class WebcamDemo extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Telemetry tele = FtcDashboard.getInstance().getTelemetry();
-        Odo o = new Odo();
-        o.init(hardwareMap);
+        Bert b = new Bert();
+        b.init(hardwareMap);
         // simple class for viewing camera feed and testing processors
-        AprilDet ad = new AprilDet();
+        PropAprilDet ad = new PropAprilDet();
         ad.init(hardwareMap, "Webcam 1");
-        o.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        b.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         tele.addData("DEBUG", "inited");
         tele.update();
         waitForStart();
 
         while (opModeIsActive()) {
-            o.motorDriveXYVectors(gamepad1.left_stick_x,-gamepad1.left_stick_y,gamepad1.right_stick_x);
+            if (gamepad1.a) ad.setWeBeProppin(true);
+            if (gamepad1.b) ad.setWeBeProppin(false);
+            b.motorDriveXYVectors(gamepad1.left_stick_x,-gamepad1.left_stick_y,gamepad1.right_stick_x);
             tele.addData("DEBUG", "vectors");
             tele.update();
             ArrayList<AprilTagDetection> dets = ad.getDetected();

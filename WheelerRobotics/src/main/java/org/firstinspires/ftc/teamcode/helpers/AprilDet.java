@@ -40,9 +40,11 @@ public class AprilDet {
 
     public double xOffset = 7;
     public double yOffset = 7;
+    public int TAGID = 0;
 
     public void init(HardwareMap hw, String webcamName) {
         bv.init(hw, atdp);
+        //TAGID = tagid;
         ElapsedTime et = new ElapsedTime();
         et.reset();
         while (et.milliseconds() < 500); // THIS MIGHT BREAK IF IT GETS COMMENTED BUT TRY ANYWAY
@@ -104,7 +106,7 @@ public class AprilDet {
                 // filter flips
 
                 for (AprilTagDetection i : detections) {
-                    if (i.id != 2) continue;
+                    if (i.id != TAGID) continue;
                     gp = Globalpositioning.find_global_pose(i);
                     if (gp.rotation_x > 0.3) continue;
 

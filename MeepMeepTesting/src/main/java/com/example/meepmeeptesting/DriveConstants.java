@@ -1,8 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive;
-
-import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+package com.example.meepmeeptesting;
 
 /*
  * Constants shared between multiple drive types.
@@ -15,7 +11,6 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
  * These are not the only parameters; some are located in the localizer classes, drive base classes,
  * and op modes themselves.
  */
-@Config
 public class DriveConstants {
 
     /*
@@ -37,8 +32,6 @@ public class DriveConstants {
      * from DriveVelocityPIDTuner.
      */
     public static final boolean RUN_USING_ENCODER = false;
-    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0,
-            17.81155759934999);
 
     /*
      * These are physical constants that can be determined from your robot (including the track
@@ -101,11 +94,6 @@ public class DriveConstants {
     /*
      * Adjust the orientations here to match your robot. See the FTC SDK documentation for details.
      */
-    public static RevHubOrientationOnRobot.LogoFacingDirection LOGO_FACING_DIR =
-            RevHubOrientationOnRobot.LogoFacingDirection.UP;
-    public static RevHubOrientationOnRobot.UsbFacingDirection USB_FACING_DIR =
-            RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
-
 
 
     public static double encoderTicksToInches(double ticks) {

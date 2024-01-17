@@ -38,7 +38,7 @@ public class BotVision {
     public OpenCvWebcam webcam;
     FtcDashboard dash = FtcDashboard.getInstance();
     Telemetry tele = dash.getTelemetry();
-    OpenCvPipeline pipeline;
+    public OpenCvPipeline pipeline;
     public boolean inited = false;
     OpenCvPipeline p = null;
 
@@ -46,7 +46,7 @@ public class BotVision {
     public void init(HardwareMap hardwareMap, OpenCvPipeline pipeline) {
         this.pipeline = pipeline;
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Front"), cameraMonitorViewId);
         webcam.setPipeline(this.pipeline);
 
         webcam.setMillisecondsPermissionTimeout(2500); // Timeout for obtaining permission is configurable. Set before opening.
