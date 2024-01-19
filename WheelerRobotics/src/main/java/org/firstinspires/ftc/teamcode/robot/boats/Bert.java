@@ -100,22 +100,74 @@ public class Bert  extends Meccanum implements Robot {
         runtime.reset();
     }
     // This robot shouldnt require a claw/arm/wrist "thread" class beacuse we'll be smart and engineer it so it cant break itself
+    public static double clawSlideThreshold = 800;
+    public static double clawOpenPos = 0.8;
+    public static double clawClosedPos = 0.34;
+    public static double planeLauncedPos = 0.8;
+    public static double planeReadyPos = 0;
+    public static double tiltSlideThreshold = 800;
+    public static double tiltPickupPos = 0.26;
+    public static double tiltPlacePos = 0.26;
+    public static double armPickupPos = 0.91;
+    public static double armSlideThreshold = 800;
+    public static double armPlacePos = 0.3;
+    public static double slidePlacePos = 1600;
+    public static double slidePickupPos = 0;
+
+    public boolean getClawOpen() {
+        return claw.getPosition() == clawOpenPos;
+    }
+    public boolean getPlaneLaunched() {
+        return plane.getPosition() == planeLauncedPos;
+    }
+    public double getArmPos() {
+        return leftSlide.getPosition();
+    }
+    public boolean getArmPickup() {
+        return getArmPos() == armPickupPos;
+    }
+    public double getTiltPos() {
+        return tilt.getPosition();
+    }
+    public boolean getTiltPickup() {
+        return getTiltPos() == tiltPickupPos;
+    }
+    public double getSlidePos() {
+        return st.pos;
+    }
     public void setPlaneLaunched(boolean launched) {
-        plane.setPosition(launched ? 0.5 : 0.8); // NEED TO TEST VALS
+        plane.setPosition(launched ? planeLauncedPos : planeReadyPos); // NEED TO TEST VALS
     }
     public void incrementTilt(double increment) {
         tilt.setPosition(tilt.getPosition() + increment);
     }
     public void setTilt(double position) {
-        tilt.setPosition(position);
+        if (st.pos < tiltSlideThreshold) return;
+        tilt.setPosition(position * 0.96); // thats the max without stalling on the bucket
     }
     public void setClawOpen(boolean open) {
-        claw.setPosition(open ? 0.7 : 1); // NEED TO TEST FOR VALS
+        if (!open && st.pos < clawSlideThreshold) return;
+        claw.setPosition(open ? clawOpenPos : clawClosedPos); // NEED TO TEST FOR VALS
+    }
+    private void setTiltUNSAFE(double position) {
+        tilt.setPosition(position * 0.96); // thats the max without stalling on the bucket
+    }
+    private void setClawOpenUNSAFE(boolean open) {
+        claw.setPosition(open ? clawOpenPos : clawClosedPos); // NEED TO TEST FOR VALS
+    }
+    private void setArmUNSAFE(double position) {
+        leftSlide.setPosition(1-position);
+        rightSlide.setPosition(position);
     }
     public void setArm(double position) {
-        //NOT READY FOR REAL ROBOT, MUST DO EXPERIMENTAL TESTING BECAUSE SERVOS ARE MOUNTED MIRRORED
-        leftSlide.setPosition(position);
-        rightSlide.setPosition(1-position);
+        if (st.pos < armSlideThreshold) return;
+        leftSlide.setPosition(1-position);
+        rightSlide.setPosition(position);
+    }
+    public void setArmPickup(boolean pickup) {
+        if (st.pos < armSlideThreshold) return;
+        leftSlide.setPosition(pickup ? 1-armPickupPos : 1-armPlacePos);
+        rightSlide.setPosition(pickup ? armPickupPos : armPlacePos);
     }
     public void spintake(double power) {
         spinners.setPower(power);
@@ -151,7 +203,23 @@ public class Bert  extends Meccanum implements Robot {
     }
     public void tick() {
         st.tick();
+        checkCatPos();
         //cawt.tick();
+    }
+    public void checkCatPos() {
+        if (st.pos < clawSlideThreshold) setClawOpenUNSAFE(false);
+        if (st.pos < tiltSlideThreshold) setTiltUNSAFE(tiltPickupPos);
+        if (st.pos < armSlideThreshold) setArmUNSAFE(armPickupPos);
+    }
+
+    public boolean armActive() {
+        return st.pos > armSlideThreshold;
+    }
+    public boolean tiltActive() {
+        return st.pos > tiltSlideThreshold;
+    }
+    public boolean clawActive() {
+        return st.pos > clawSlideThreshold;
     }
     public void autoTick() {
         st.tick();
@@ -301,6 +369,7 @@ public class Bert  extends Meccanum implements Robot {
     public static double sp = 0.003; // slide kp const
     public static double slideTar = 0; // target of slide (duh)
 
+
     private class SlideThread {
 
         public double basePos = 0;
@@ -365,6 +434,7 @@ public class Bert  extends Meccanum implements Robot {
         }
 
         public void driveSlides(double p) {
+            if (p == 0) setTarget(pos); // untested
             tele.addData("cpower", power);
             SLIDE_TARGETING = false;
             power = -p;
