@@ -7,6 +7,7 @@ import static org.opencv.imgproc.Imgproc.contourArea;
 import static org.opencv.imgproc.Imgproc.drawContours;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Core;
@@ -26,11 +27,12 @@ import org.openftc.apriltag.AprilTagDetectorJNI;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
+@Config
 public class DualAprilPropPipeline extends OpenCvPipeline {
-
+    public static int propSize = 3000;
+    public static int xcutoff = 200;
     public static int hMax, hMin, sMax, sMin, lMax, lMin;
     public int pos = 0;
     public boolean weBeProppin = true;
@@ -82,7 +84,7 @@ public class DualAprilPropPipeline extends OpenCvPipeline {
         try {
 
             if (weBeProppin) {
-
+            /*
                 Mat temp = new Mat();
                 Imgproc.cvtColor(input, temp, COLOR_BGR2HSV);
                 Scalar low = new Scalar(hMin, sMin, lMin);
@@ -161,8 +163,39 @@ public class DualAprilPropPipeline extends OpenCvPipeline {
                     FtcDashboard.getInstance().getTelemetry().addData("rect3y", rect3.y);
                     FtcDashboard.getInstance().getTelemetry().addData("rect3a", rect3.area());
                     FtcDashboard.getInstance().getTelemetry().update();
-                    pos = position;
+
+                */
+                Mat temp = new Mat();
+                Imgproc.cvtColor(input, temp, COLOR_BGR2HSV);
+                Scalar low = new Scalar(hMin, sMin, lMin);
+                Scalar high = new Scalar(hMax, sMax, lMax);
+                Mat mask = new Mat();
+                inRange(temp, low, high, mask);
+                List<MatOfPoint> contours = new ArrayList<>();
+                double maxArea = 0;
+                Mat hierarchey = new Mat();
+                Mat ROI = mask.submat(mask.height() / 2, mask.height(), 0, mask.width());
+
+                Imgproc.findContours(ROI, contours, hierarchey, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+                List<Double> areas = new ArrayList<>();
+                int position = 0;
+
+                contours.removeIf(c -> contourArea(c) < propSize);
+
+                if (contours.size() == 1) {
+
+                    Rect rect3 = boundingRect(contours.get(0));
+
+                    if (rect3.x > xcutoff) pos = 3;
+                    else pos = 2;
+                } if (contours.size() == 0) {
+                    pos = 1;
                 }
+                FtcDashboard.getInstance().getTelemetry().addData("pos", pos);
+                FtcDashboard.getInstance().getTelemetry().update();
+                drawContours(input, contours, -1, new Scalar(0, 0, 255), 2, Imgproc.LINE_8, new Mat(), 2, new Point());
+
+
             }else {
                 // Convert to greyscale
                 Imgproc.cvtColor(input, grey, Imgproc.COLOR_RGB2GRAY);

@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.chassis.Chassis;
 // robot driving and motion class
 
 public class Meccanum implements Chassis {
+    public double offset = 0;
 
     protected double[] left = {
             1,  -1,
@@ -170,7 +171,7 @@ public class Meccanum implements Chassis {
     }
     public void fieldCentricDrive(double x, double y, double rx){
         // Read inverse IMU heading, as the IMU heading is CW positive
-        double botHeading = -imu.getAngularOrientation().firstAngle;
+        double botHeading = -imu.getAngularOrientation().firstAngle - offset;
 
         double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
         double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);

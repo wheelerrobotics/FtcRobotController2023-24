@@ -8,6 +8,7 @@ import android.content.Context;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.ftccommon.SoundPlayer;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -34,7 +35,17 @@ public class Bert  extends Meccanum implements Robot {
     public SampleMecanumDrive rr = null;
     private Servo claw, leftSlide, rightSlide, tilt, plane;
     Telemetry tele = FtcDashboard.getInstance().getTelemetry();
+    public void teleinit(HardwareMap hardwareMap) {
+        // internal IMU setup (copied and pasted, idk what it really does, but it works)
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
 
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+    }
+    public void resetImu(double offset) {
+        this.offset = -imu.getAngularOrientation().firstAngle;
+    }
     @Override
     public void init(HardwareMap hardwareMap) {
         super.init(hardwareMap);
@@ -54,7 +65,7 @@ public class Bert  extends Meccanum implements Robot {
 
         motorFrontLeft = (DcMotorEx) hardwareMap.dcMotor.get("motorFrontLeft"); // EH1
         motorBackLeft = (DcMotorEx) hardwareMap.dcMotor.get("motorBackLeft"); // EH4
-        motorFrontRight = (DcMotorEx) hardwareMap.dcMotor.get("motorFrontRight"); // CH3
+        motorFrontRight = (DcMotorEx) hardwareMap.dcMotor.get("motorFrontRight"); // CH2
         motorBackRight = (DcMotorEx) hardwareMap.dcMotor.get("motorBackRight"); // CH0
 
         // Reverse the left side motors and set behaviors to stop instead of coast
@@ -66,7 +77,7 @@ public class Bert  extends Meccanum implements Robot {
 
 
         slides = (DcMotorEx) hardwareMap.dcMotor.get("slides"); // EH3
-        spinners = (DcMotorEx) hardwareMap.dcMotor.get("spinners"); // CH2
+        spinners = (DcMotorEx) hardwareMap.dcMotor.get("spinners"); // CH3
         rightHang = (DcMotorEx) hardwareMap.dcMotor.get("rightHang"); // CH1
         leftHang = (DcMotorEx) hardwareMap.dcMotor.get("leftHang"); // EH0
 
@@ -106,11 +117,11 @@ public class Bert  extends Meccanum implements Robot {
     public static double planeLauncedPos = 0.8;
     public static double planeReadyPos = 0;
     public static double tiltSlideThreshold = 800;
-    public static double tiltPickupPos = 0.26;
-    public static double tiltPlacePos = 0.26;
+    public static double tiltPlacePos = 0.43;
+    public static double tiltPickupPos = 0.31;
     public static double armPickupPos = 0.91;
     public static double armSlideThreshold = 800;
-    public static double armPlacePos = 0.3;
+    public static double armPlacePos = 0.45;
     public static double slidePlacePos = 1600;
     public static double slidePickupPos = 0;
 
@@ -121,7 +132,7 @@ public class Bert  extends Meccanum implements Robot {
         return plane.getPosition() == planeLauncedPos;
     }
     public double getArmPos() {
-        return leftSlide.getPosition();
+        return rightSlide.getPosition();
     }
     public boolean getArmPickup() {
         return getArmPos() == armPickupPos;
@@ -169,6 +180,10 @@ public class Bert  extends Meccanum implements Robot {
         leftSlide.setPosition(pickup ? 1-armPickupPos : 1-armPlacePos);
         rightSlide.setPosition(pickup ? armPickupPos : armPlacePos);
     }
+    public void setTiltPickup(boolean pickup) {
+        if (st.pos < tiltSlideThreshold) return;
+        tilt.setPosition(pickup ? tiltPickupPos : tiltPlacePos);
+    }
     public void spintake(double power) {
         spinners.setPower(power);
     }
@@ -207,9 +222,9 @@ public class Bert  extends Meccanum implements Robot {
         //cawt.tick();
     }
     public void checkCatPos() {
-        if (st.pos < clawSlideThreshold) setClawOpenUNSAFE(false);
-        if (st.pos < tiltSlideThreshold) setTiltUNSAFE(tiltPickupPos);
-        if (st.pos < armSlideThreshold) setArmUNSAFE(armPickupPos);
+        if (st.pos < clawSlideThreshold && !getClawOpen()) setClawOpenUNSAFE(true);
+        if (st.pos < tiltSlideThreshold && !getTiltPickup()) setTiltUNSAFE(tiltPickupPos);
+        if (st.pos < armSlideThreshold && !getArmPickup()) setArmUNSAFE(armPickupPos);
     }
 
     public boolean armActive() {
@@ -223,6 +238,7 @@ public class Bert  extends Meccanum implements Robot {
     }
     public void autoTick() {
         st.tick();
+        checkCatPos();
         rr.update();
     }
 
@@ -234,7 +250,9 @@ public class Bert  extends Meccanum implements Robot {
     public void setSlideTarget(double target) {
         st.setTarget(target);
     }
-
+    public void setSlideTargeting(boolean targeting) {
+        st.setTargeting(targeting);
+    }
     // CAWT (Claw Arm Wrist Thread)
     /*
     public void setArmTarget(double target) {
@@ -363,15 +381,24 @@ public class Bert  extends Meccanum implements Robot {
     }
 */
     public static double maxHeight = 2800;//2848 technically
-    public static double minHeight = -20; // cprobably good (maybe just set to 20 so the 10ish off errors are unnoticed)
+    public static double minHeight = -80; // cprobably good (maybe just set to 20 so the 10ish off errors are unnoticed)
 
     public static double scaler = 0.008; // scales width of sigmoid, a const goes along with it so dont change on its own
     public static double sp = 0.003; // slide kp const
     public static double slideTar = 0; // target of slide (duh)
-
+    public void setDownCorrection(boolean corrected) {
+        st.downCorrection = corrected;
+    }
+    public void setDownCorrectionFactor(double factor) {
+        st.correctionFactor = factor;
+    }
+    public void resetSlides() {
+        st.resetSlideBasePos();
+    }
 
     private class SlideThread {
-
+        public boolean downCorrection = false;
+        public double correctionFactor = 0.25;
         public double basePos = 0;
         public double pos = 0;
         public double errorThreshold = 20;
@@ -430,19 +457,33 @@ public class Bert  extends Meccanum implements Robot {
         }
 
         public double minMaxScaler(double x, double power) {
-            return power * (power > 0 ? ((1.3 * 1/(1+Math.pow(E, -scaler*(x-300+minHeight)))) - 0.1) : ((1.3 * 1/(1+Math.pow(E, scaler*(x+300-maxHeight)))) - 0.1));
+            double p = power * (power > 0 ? ((1.3 * 1/(1+Math.pow(E, -scaler*(x-300+minHeight)))) - 0.1) : ((1.3 * 1/(1+Math.pow(E, scaler*(x+300-maxHeight)))) - 0.1));
+            if (p > -0.05 && p < 0.25 && pos < 400 && downCorrection) { // let it go farther down
+                p = st.pos > 0 ? correctionFactor : 0.15;
+            }
+            return p;
         }
 
         public void driveSlides(double p) {
-            if (p == 0) setTarget(pos); // untested
+            //if (p == 0) setTarget(pos); // untested
+            tele.addData("ipower", p);
             tele.addData("cpower", power);
+            tele.update();
             SLIDE_TARGETING = false;
             power = -p;
+        }
+        public void setTargeting(boolean targeting) {
+            SLIDE_TARGETING = targeting;
         }
 
         public void setTarget(double tar) {
             slideTar = tar;
             SLIDE_TARGETING = true;
+        }
+        public void resetSlideBasePos() {
+            slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            slides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            basePos = slides.getCurrentPosition();
         }
         public boolean isBusy() {
 
