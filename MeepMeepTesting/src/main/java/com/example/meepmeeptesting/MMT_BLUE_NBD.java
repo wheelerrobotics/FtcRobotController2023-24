@@ -11,7 +11,7 @@ import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.DriveTrainType;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
-public class MeepMeepTesting4 {
+public class MMT_BLUE_NBD {
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
         double speed = 5;
