@@ -5,14 +5,13 @@ import static java.lang.Math.PI;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.demos.AprilTagLocalizer;
 import org.firstinspires.ftc.teamcode.robot.boats.Odo;
-
-@Autonomous
+@Disabled
 @Config
 public class AprilLocalAuto extends LinearOpMode {
     AprilTagLocalizer atl = null;

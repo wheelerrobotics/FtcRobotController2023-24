@@ -43,7 +43,7 @@ public class Bert  extends Meccanum implements Robot {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
     }
-    public void resetImu(double offset) {
+    public void resetImu() {
         this.offset = -imu.getAngularOrientation().firstAngle;
     }
     @Override
@@ -153,11 +153,11 @@ public class Bert  extends Meccanum implements Robot {
         tilt.setPosition(tilt.getPosition() + increment);
     }
     public void setTilt(double position) {
-        if (st.pos < tiltSlideThreshold) return;
+        if (st.pos < tiltSlideThreshold && cawtFailsafe) return;
         tilt.setPosition(position * 0.96); // thats the max without stalling on the bucket
     }
     public void setClawOpen(boolean open) {
-        if (!open && st.pos < clawSlideThreshold) return;
+        if (!open && st.pos < clawSlideThreshold && cawtFailsafe) return;
         claw.setPosition(open ? clawOpenPos : clawClosedPos); // NEED TO TEST FOR VALS
     }
     private void setTiltUNSAFE(double position) {
@@ -171,17 +171,17 @@ public class Bert  extends Meccanum implements Robot {
         rightSlide.setPosition(position);
     }
     public void setArm(double position) {
-        if (st.pos < armSlideThreshold) return;
+        if (st.pos < armSlideThreshold && cawtFailsafe) return;
         leftSlide.setPosition(1-position);
         rightSlide.setPosition(position);
     }
     public void setArmPickup(boolean pickup) {
-        if (st.pos < armSlideThreshold) return;
+        if (st.pos < armSlideThreshold && cawtFailsafe) return;
         leftSlide.setPosition(pickup ? 1-armPickupPos : 1-armPlacePos);
         rightSlide.setPosition(pickup ? armPickupPos : armPlacePos);
     }
     public void setTiltPickup(boolean pickup) {
-        if (st.pos < tiltSlideThreshold) return;
+        if (st.pos < tiltSlideThreshold && cawtFailsafe) return;
         tilt.setPosition(pickup ? tiltPickupPos : tiltPlacePos);
     }
     public void spintake(double power) {
@@ -238,7 +238,7 @@ public class Bert  extends Meccanum implements Robot {
     }
     public void autoTick() {
         st.tick();
-        checkCatPos();
+        if (cawtFailsafe) checkCatPos();
         rr.update();
     }
 
@@ -385,7 +385,16 @@ public class Bert  extends Meccanum implements Robot {
 
     public static double scaler = 0.008; // scales width of sigmoid, a const goes along with it so dont change on its own
     public static double sp = 0.003; // slide kp const
-    public static double slideTar = 0; // target of slide (duh)
+    public double slideTar = 0; // target of slide (duh)
+    public boolean cawtFailsafe = true;
+    public void setCawtFailsafe(boolean on) {
+        cawtFailsafe = on;
+    }
+    public void setCawtThresholds(double threshold) {
+        tiltSlideThreshold = threshold;
+        armSlideThreshold = threshold;
+        clawSlideThreshold = threshold;
+    }
     public void setDownCorrection(boolean corrected) {
         st.downCorrection = corrected;
     }

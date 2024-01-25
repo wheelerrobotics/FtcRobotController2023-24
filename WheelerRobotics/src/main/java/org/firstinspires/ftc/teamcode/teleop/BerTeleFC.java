@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.robot.boats.Bert;
 
 @Config
 @TeleOp
-public class BerTele extends LinearOpMode {
+public class BerTeleFC extends LinearOpMode {
     public static double aPos = 0.3;
     public static double tPos = 0;
     public static boolean cPos = false;
@@ -92,6 +92,7 @@ public class BerTele extends LinearOpMode {
         b.setDownCorrectionFactor(0.45);
         //PropAprilDet ad = new PropAprilDet();
         //ad.init(hardwareMap, "Front");
+        b.teleinit(hardwareMap);
 
         Telemetry tele = FtcDashboard.getInstance().getTelemetry();
 
@@ -203,8 +204,11 @@ public class BerTele extends LinearOpMode {
                 if (gamepad1.left_bumper) tempDirectionMultiplier = -1;
                 else tempDirectionMultiplier = 1;
 
-                b.motorDriveXYVectors(tempDirectionMultiplier * permaDirectionMultiplier * gamepad1.left_stick_x, tempDirectionMultiplier * permaDirectionMultiplier * -gamepad1.left_stick_y, (gamepad1.right_bumper ? 1 : SLOWDOWN) * gamepad1.right_stick_x);
-                //b.fieldCentricDrive(directionMultiplier * gamepad1.left_stick_x, directionMultiplier * -gamepad1.left_stick_y, (gamepad1.right_bumper ? 1 : SLOWDOWN) * gamepad1.right_stick_x);
+                //b.motorDriveXYVectors(tempDirectionMultiplier * permaDirectionMultiplier * gamepad1.left_stick_x, tempDirectionMultiplier * permaDirectionMultiplier * -gamepad1.left_stick_y, (gamepad1.right_bumper ? 1 : SLOWDOWN) * gamepad1.right_stick_x);
+                if (gamepad1.a) {
+                    b.resetImu();
+                }
+                b.fieldCentricDrive(tempDirectionMultiplier * permaDirectionMultiplier * -gamepad1.left_stick_y, tempDirectionMultiplier * permaDirectionMultiplier * -gamepad1.left_stick_x, (gamepad1.right_bumper ? 1 : SLOWDOWN) * gamepad1.right_stick_x);
                 if (gamepad2.left_stick_y == 0) { // if player 2 not controlling intake, let player 1
                     b.spintake(gamepad1.left_trigger - gamepad1.right_trigger);
                 }
@@ -220,7 +224,7 @@ public class BerTele extends LinearOpMode {
             }
             //checkCode(new Gamepad[]{gamepad1, gamepad2});
         }
-        }
+    }
 
 
     public void cancelMacros() {
