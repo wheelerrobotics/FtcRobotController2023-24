@@ -65,8 +65,8 @@ public class RedStacks extends LinearOpMode {
                                 .build());
                     }else {
                         b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(new Pose2d(-36, -64, PI / 2))
-                                .addTrajectory(genCrazyTrajectory(new Pose2d(-34, -64, PI/2), new Pose2d(-34,-36, PI/3), new Pose2d(1, 2, 0), new Pose2d(8,5, 0), new Pose2d(1,1,0), new Pose2d(1,1, 0)))
-                                .addTrajectory(genCrazyTrajectory(new Pose2d(-35, -36, PI / 3), new Pose2d(36, -30, 0), new Pose2d(-120, -70, 0), new Pose2d(0, -90, 0), new Pose2d(200, 1800, 0), new Pose2d(800, -500, 0)))
+                                .addTrajectory(genCrazyTrajectory(new Pose2d(-36, -64, PI/2), new Pose2d(-31,-36, PI/6), new Pose2d(1, 2, 0.01), new Pose2d(8,5, -.06), new Pose2d(1,1,0), new Pose2d(1,1, 0)))
+                                .addTrajectory(genCrazyTrajectory(new Pose2d(-31,-36, PI/6), new Pose2d(36, -30, 0), new Pose2d(-120, -70, 0), new Pose2d(0, -90, 0), new Pose2d(200, 1800, 0), new Pose2d(800, -500, 0)))
                                 .build());
                     }
                     done = true;
