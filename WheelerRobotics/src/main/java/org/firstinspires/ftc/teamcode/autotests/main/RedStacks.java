@@ -97,25 +97,30 @@ public class RedStacks extends LinearOpMode {
             }
             if (curMoveID == 3) {
                 if (!b.rr.isBusy()){
-                    b.setSlideTarget(700);
+                    b.setSlideTarget(900);
                     b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(new Pose2d(36, -28, 0))
-                            .lineToLinearHeading(new Pose2d(57, prop == 1 ? -33 : (prop == 2 ? -42 :  -48), 0))
+                            .lineToLinearHeading(new Pose2d(57, prop == 1 ? -32 : (prop == 2 ? -39 :  -50), 0))
                             .waitSeconds(3)
                             .addTemporalMarker(0, () -> {
-                                b.setSlideTarget(700);
+                                b.setSlideTarget(900);
                             })
                             .addTemporalMarker(1, () -> {
                                 b.setClawOpen(false);
                             })
                             .addTemporalMarker(1.5, () -> {
-                                b.setTilt(tiltPlacePos + 0.05);
+                                //b.setTilt(tiltPlacePos + prop == 1 ? 0.05 : 0.03);
+                                b.setTilt(tiltPlacePos);
                                 b.setArmPickup(false);
                             })
-                            .addTemporalMarker(2.2, () -> {
+                            .addTemporalMarker(1.8, ()->{
+                                //b.setTilt(tiltPlacePos);// + (prop == 1 ? 0.05 : 0.0));
+
+                            })
+                            .addTemporalMarker(2.5, () -> {
                                 b.setClawOpen(true);
                             })
                                     .addTemporalMarker(2.7, () -> {
-                                        b.setSlideTarget(1000);
+                                        b.setSlideTarget(1200);
                                     })
                             .addTemporalMarker(3.2, () ->{
                                 curMoveID++;
