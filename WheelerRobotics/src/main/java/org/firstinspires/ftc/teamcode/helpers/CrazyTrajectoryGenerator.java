@@ -1,7 +1,13 @@
 package org.firstinspires.ftc.teamcode.helpers;
 
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ACCEL;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ANG_VEL;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_VEL;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.TRACK_WIDTH;
 import static org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive.ACCEL_CONSTRAINT;
 import static org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive.VEL_CONSTRAINT;
+import static org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive.getAccelerationConstraint;
+import static org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive.getVelocityConstraint;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -44,7 +50,7 @@ public class CrazyTrajectoryGenerator {
                             endD.getHeading(),
                             endD2.getHeading())
                     )
-        ), VEL_CONSTRAINT, ACCEL_CONSTRAINT);
+        ), getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH), getAccelerationConstraint(MAX_ACCEL));
     }
     static Trajectory genCrazyTrajectory(Pose2d startPose, Pose2d endPose, Pose2d startD, Pose2d endD){
         return TrajectoryGenerator.INSTANCE.generateTrajectory(new Path(

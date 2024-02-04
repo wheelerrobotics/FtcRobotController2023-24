@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 @Config
 public class PropAprilDet {
     public global_position gp = null;
+    public static int propExposureMillis = 2000;
     public Pose2d pos = null;
     Double prevRx = null;
     public static int exposureMillis = 500;
@@ -65,7 +66,9 @@ public class PropAprilDet {
     }
     public void tick() {
         if(dapp.weBeProppin) {
-            bv.webcam.getExposureControl().setMode(ExposureControl.Mode.AperturePriority);
+            bv.webcam.getExposureControl().setMode(ExposureControl.Mode.Manual);
+            bv.webcam.getExposureControl().setExposure(propExposureMillis, TimeUnit.MICROSECONDS);
+            //bv.webcam.getExposureControl().setMode(ExposureControl.Mode.AperturePriority);
         }else{
             bv.webcam.getExposureControl().setMode(ExposureControl.Mode.Manual);
             bv.webcam.getExposureControl().setExposure(exposureMillis, TimeUnit.MICROSECONDS);
@@ -132,7 +135,7 @@ public class PropAprilDet {
                 // filter flips
 
                 for (AprilTagDetection i : detections) {
-                    if (i.id != (nb ? 5 : 2)) continue;
+                    if (i.id != (nb ? 4 : 1)) continue;
                     gp = Globalpositioning.find_global_pose(i);
                     if (gp.rotation_x > 0.3) continue;
 

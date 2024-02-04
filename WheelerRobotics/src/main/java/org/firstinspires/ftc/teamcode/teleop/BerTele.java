@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import static org.firstinspires.ftc.teamcode.robot.boats.Bert.leftShuvDown;
+import static org.firstinspires.ftc.teamcode.robot.boats.Bert.leftShuvUp;
+import static org.firstinspires.ftc.teamcode.robot.boats.Bert.rightShuvDown;
+import static org.firstinspires.ftc.teamcode.robot.boats.Bert.rightShuvUp;
 import static org.firstinspires.ftc.teamcode.robot.boats.Bert.slidePickupPos;
 import static org.firstinspires.ftc.teamcode.robot.boats.Bert.slidePlacePos;
 import static org.firstinspires.ftc.teamcode.robot.boats.Bert.tiltPickupPos;
@@ -12,6 +16,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -87,6 +92,7 @@ public class BerTele extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         b = new Bert();
         b.init(hardwareMap);
+        b.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //b.teleinit(hardwareMap);
         b.setDownCorrection(true);
         b.setDownCorrectionFactor(0.45);
@@ -102,6 +108,12 @@ public class BerTele extends LinearOpMode {
         }
         while (opModeIsActive()) {
             try {
+                if (gamepad1.dpad_left) b.setLeftShuv(leftShuvDown);
+                else b.setLeftShuv(leftShuvUp);
+
+                if (gamepad1.dpad_right) b.setRightShuv(rightShuvDown);
+                else b.setRightShuv(rightShuvUp);
+
                 if (gamepad2.x && !xWasPressed) {
                     cancelMacros();
                     xWasPressed = true;

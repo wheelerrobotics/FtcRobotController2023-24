@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.helpers.PropAprilDet;
 import org.firstinspires.ftc.teamcode.robot.boats.Bert;
 
 @Autonomous
-public class BlueBackdrop extends LinearOpMode {
+public class BlueStacks636 extends LinearOpMode {
     public int localizationCount = 0;
     ElapsedTime cooldown;
     int curMoveID = 0;
@@ -37,7 +37,7 @@ public class BlueBackdrop extends LinearOpMode {
         Telemetry tele = FtcDashboard.getInstance().getTelemetry();
         while (opModeInInit()) {
 
-            b.rr.setPoseEstimate(new Pose2d(12, 64, -PI/2));
+            b.rr.setPoseEstimate(new Pose2d(-36, 64, -PI/2));
             if (ad.bv.opened) {
                 ad.setWeBeProppin(true);
                 ad.tick();
@@ -47,28 +47,34 @@ public class BlueBackdrop extends LinearOpMode {
         while (opModeIsActive()) {
             if (curMoveID ==0) {
                 ad.setWeBeProppin(true);
-                cooldown.reset();
-                while (cooldown.milliseconds() < 2000) {
-                    ad.tick();
-                }
                 ad.tick();
                 prop = ad.getProp();
                 if (prop !=0) { // add a timeout or make getprop rly robust
                     if (prop == 1) {
-                        b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(b.rr.getPoseEstimate())
-                                .addTrajectory(genCrazyTrajectory(new Pose2d(12, 64, -PI/2), new Pose2d(14,39, -PI/6), new Pose2d(1, -2, 0), new Pose2d(8,-5, 0), new Pose2d(-1,-1,0), new Pose2d(-1,-1, 0)))
-                                .addTrajectory(genCrazyTrajectory(new Pose2d(15,36, -PI/6), new Pose2d(36, 44, 0), new Pose2d(-13, 12, -0.06), new Pose2d(0, -1, 0.06), new Pose2d(0,1000,0), new Pose2d(57,0, 0.003)))
+                        b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(new Pose2d(-36, 64, -PI/2))
+                                .addTrajectory(genCrazyTrajectory(new Pose2d(-36, 64, -PI/2), new Pose2d(-33,36, -PI/6), new Pose2d(1, -2, 0), new Pose2d(8,-5, 0), new Pose2d(-1,-1,0), new Pose2d(-1,-1, 0)))
+                                //.addTrajectory(genCrazyTrajectory(new Pose2d(-33, 36, -PI / 6), new Pose2d(36, 40, 0), new Pose2d(-120, 60, 0), new Pose2d(0, 90, 0), new Pose2d(200, -1800, 0), new Pose2d(1000, 200, 0)))
+                                .back(3)
+                                .lineToLinearHeading(new Pose2d(-36, 52, 0))
+                                .addTrajectory(genCrazyTrajectory(new Pose2d(-36, 52, 0), new Pose2d(36, 40, 0), new Pose2d(0, 30, 0), new Pose2d(0, -30, 0), new Pose2d(0, 0, 0), new Pose2d(500, 300, 0)))
                                 .build());
                     }else if(prop == 2) {
-                        b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(b.rr.getPoseEstimate())
-
-                                .addTrajectory(genCrazyTrajectory(new Pose2d(12, 64, -PI/2), new Pose2d(12,38, -PI/2), new Pose2d(0, -2, 0), new Pose2d( 0,-5, 0), new Pose2d(1,1,0), new Pose2d(1,1, 0)))
-                                .addTrajectory(genCrazyTrajectory(new Pose2d(12,35, -PI/2), new Pose2d(36, 44, 0), new Pose2d(0, 13, 0), new Pose2d(12, -12, 0), new Pose2d(0,200,0), new Pose2d(57,0, 0)))
+                        b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(new Pose2d(-36, 64, -PI/2))
+                                .lineToLinearHeading(new Pose2d(-36,34, -PI/2))
+                                //.addTrajectory(genCrazyTrajectory(new Pose2d(-36, 65, -PI / 2), new Pose2d(-36, 32, -PI / 2), new Pose2d(0.1, 0, 0), new Pose2d(-0.1, 0, 0), new Pose2d(0, 0, 0), new Pose2d(0, 0, 0)))
+                                //.addTrajectory(genCrazyTrajectory(new Pose2d(-36, 32, -PI / 2), new Pose2d(36, 40, 0), new Pose2d(0, 150, 0.05), new Pose2d(12, 90, -0.02), new Pose2d(-2000, -2700, 0), new Pose2d(570, -200, 0)))
+                                .back(3)
+                                .lineToLinearHeading(new Pose2d(-36, 52, 0))
+                                .addTrajectory(genCrazyTrajectory(new Pose2d(-36, 52, 0), new Pose2d(36, 40, 0), new Pose2d(0, 30, 0), new Pose2d(0, -30, 0), new Pose2d(0, 0, 0), new Pose2d(500, 300, 0)))
                                 .build());
                     }else {
-                        b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(b.rr.getPoseEstimate())
-                                .addTrajectory(genCrazyTrajectory(new Pose2d(12, 64, -PI/2), new Pose2d(12,36, 7*PI/6), new Pose2d(-1, -2, 0.01), new Pose2d(-8,-5, -.06), new Pose2d(-1,-1,0), new Pose2d(-1,-1, 0)))
-                                .addTrajectory(genCrazyTrajectory(new Pose2d(8,36, 7*PI/6), new Pose2d(36, 44, 0), new Pose2d(13, 12, 0.1), new Pose2d(0, -1, 0.06), new Pose2d(0,1000,0), new Pose2d(57,0, 0.003)))
+
+                        b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(new Pose2d(-36, 64, -PI/2))
+                                .addTrajectory(genCrazyTrajectory(new Pose2d(-36, 64, -PI / 2), new Pose2d(-37, 36,  -5*PI / 6), new Pose2d(-1, -2, 0), new Pose2d(-8, -5, 0), new Pose2d(1, -1, 0), new Pose2d(1, -1, 0)))
+                                //.addTrajectory(genCrazyTrajectory(new Pose2d(-37, 36,  -5*PI / 6), new Pose2d(36, 40, 0), new Pose2d(130, 100, 0.06), new Pose2d(0, 24, -0.06), new Pose2d(-2350, -2400, 0), new Pose2d(1007, -100, -0.003)))
+                                .back(3)
+                                .lineToLinearHeading(new Pose2d(-36, 52, 0))
+                                .addTrajectory(genCrazyTrajectory(new Pose2d(-36, 52, 0), new Pose2d(36, 40, 0), new Pose2d(0, 30, 0), new Pose2d(0, -30, 0), new Pose2d(0, 0, 0), new Pose2d(500, 300, 0)))
                                 .build());
                     }
                     done = true;
@@ -102,39 +108,41 @@ public class BlueBackdrop extends LinearOpMode {
                     b.setSlideTarget(700);
                     b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(new Pose2d(36, 44, 0))
                             .lineToLinearHeading(new Pose2d(57, prop == 1 ? 46 : (prop == 2 ? 34 :  26), 0))
-                            .waitSeconds(0.9)
+                            .waitSeconds(3)
                             .addTemporalMarker(0, () -> {
                                 b.setSlideTarget(700);
                             })
-                            .addTemporalMarker(0.3, () -> {
+                            .addTemporalMarker(1, () -> {
                                 b.setClawOpen(false);
                             })
-                            .addTemporalMarker(0.8, () -> {
-                                b.setTilt(tiltPlacePos + (prop == 1 ? 0.02 : (prop == 2 ? 0.02 : 0.02)));
+                            .addTemporalMarker(1.5, () -> {
+                                b.setTilt(tiltPlacePos);
                                 b.setArmPickup(false);
                             })
-                            .addTemporalMarker(1.5, () -> {
+                            .addTemporalMarker(2.3, () -> {
                                 b.setClawOpen(true);
                             })
-                            .addTemporalMarker(2, () -> {
+                            .addTemporalMarker(2.7, () -> {
                                 b.setSlideTarget(1000);
+                            })
+                            .addTemporalMarker(3.2, () ->{
+                                curMoveID++;
                             })
                             .build());
                 }
             }
             if (curMoveID == 5) {
                 if (!b.rr.isBusy()){
-                    Pose2d curpos = prop == 1 ? new Pose2d(54, 44, 0) : (prop == 2 ? new Pose2d(54, 36, 0) : new Pose2d(54, 28, 0));
+                    Pose2d curpos = prop == 1 ? new Pose2d(57, 44, 0) : (prop == 2 ? new Pose2d(57, 36, 0) : new Pose2d(57, 28, 0));
                     b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(curpos)
-                                    .lineTo(new Vector2d(44, curpos.getY()))
-                                    .strafeLeft(prop == 1 ? 20 : (prop == 2 ? 30 : 40))
-                                    .forward(10)
+                            .lineTo(new Vector2d(44, curpos.getY()))
+                            .waitSeconds(3)
                             .addTemporalMarker(0.5, () -> {
                                 b.setClawOpen(true);
                                 b.setArmPickup(true);
                                 b.setTiltPickup(true);
                             })
-                            .addTemporalMarker(2, () -> {
+                            .addTemporalMarker(1, () -> {
                                 b.setDownCorrection(true);
                                 b.setDownCorrectionFactor(0.1);
                                 b.setSlideTarget(0);
@@ -152,3 +160,4 @@ public class BlueBackdrop extends LinearOpMode {
         }
     }
 }
+

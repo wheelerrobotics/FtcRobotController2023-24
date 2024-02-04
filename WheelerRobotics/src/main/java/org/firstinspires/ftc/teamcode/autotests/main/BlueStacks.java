@@ -47,12 +47,15 @@ public class BlueStacks extends LinearOpMode {
         while (opModeIsActive()) {
             if (curMoveID ==0) {
                 ad.setWeBeProppin(true);
-                ad.tick();
+                cooldown.reset();
+                while (cooldown.milliseconds() < 2000) {
+                    ad.tick();
+                }
                 prop = ad.getProp();
                 if (prop !=0) { // add a timeout or make getprop rly robust
                     if (prop == 1) {
                         b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(new Pose2d(-36, 64, -PI/2))
-                                .addTrajectory(genCrazyTrajectory(new Pose2d(-36, 64, -PI/2), new Pose2d(-33,36, -PI/6), new Pose2d(1, -2, 0), new Pose2d(8,-5, 0), new Pose2d(-1,-1,0), new Pose2d(-1,-1, 0)))
+                                .addTrajectory(genCrazyTrajectory(new Pose2d(-36, 64, -PI/2), new Pose2d(-32,36, -PI/6), new Pose2d(1, -2, 0), new Pose2d(8,-5, 0), new Pose2d(-1,-1,0), new Pose2d(-1,-1, 0)))
                                 .addTrajectory(genCrazyTrajectory(new Pose2d(-33, 36, -PI / 6), new Pose2d(36, 40, 0), new Pose2d(-120, 60, 0), new Pose2d(0, 90, 0), new Pose2d(200, -1800, 0), new Pose2d(1000, 200, 0)))
                                 .build());
                     }else if(prop == 2) {
@@ -64,8 +67,10 @@ public class BlueStacks extends LinearOpMode {
                     }else {
 
                         b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(new Pose2d(-36, 64, -PI/2))
-                                .addTrajectory(genCrazyTrajectory(new Pose2d(-36, 64, -PI / 2), new Pose2d(-37, 36,  -5*PI / 6), new Pose2d(-1, -2, 0), new Pose2d(-8, -5, 0), new Pose2d(1, -1, 0), new Pose2d(1, -1, 0)))
-                                .addTrajectory(genCrazyTrajectory(new Pose2d(-37, 36,  -5*PI / 6), new Pose2d(36, 40, 0), new Pose2d(130, 100, 0.06), new Pose2d(0, 24, -0.06), new Pose2d(-2350, -2400, 0), new Pose2d(1007, -100, -0.003)))
+                                .addTrajectory(genCrazyTrajectory(new Pose2d(-36, 64, -PI/2), new Pose2d(-33,36, -5*PI/6), new Pose2d(-1, -2, 0.0), new Pose2d(-8,-5, 0.06), new Pose2d(-1,-1,0), new Pose2d(-1,-1, 0)))
+
+                                //.addTrajectory(genCrazyTrajectory(new Pose2d(-36, 64, -PI / 2), new Pose2d(-37, 36,  -5*PI / 6), new Pose2d(-1, -2, 0), new Pose2d(-8, -5, 0), new Pose2d(1, -1, 0), new Pose2d(1, -1, 0)))
+                                .addTrajectory(genCrazyTrajectory(new Pose2d(-37, 36,  -5*PI / 6), new Pose2d(36, 40, 0), new Pose2d(130, 100, 0.06), new Pose2d(0, 24, -0.06), new Pose2d(-2350, -2500, 0), new Pose2d(1007, -100, -0.003)))
                                 .build());
                     }
                     done = true;
@@ -96,27 +101,27 @@ public class BlueStacks extends LinearOpMode {
             }
             if (curMoveID == 3) {
                 if (!b.rr.isBusy()){
-                    b.setSlideTarget(700);
+                    b.setSlideTarget(900);
                     b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(new Pose2d(36, 44, 0))
                             .lineToLinearHeading(new Pose2d(57, prop == 1 ? 46 : (prop == 2 ? 34 :  26), 0))
-                            .waitSeconds(3)
+                            .waitSeconds(0.9)
                             .addTemporalMarker(0, () -> {
                                 b.setSlideTarget(700);
                             })
-                            .addTemporalMarker(1, () -> {
+                            .addTemporalMarker(0.3, () -> {
                                 b.setClawOpen(false);
                             })
-                            .addTemporalMarker(1.5, () -> {
-                                b.setTilt(tiltPlacePos);
+                            .addTemporalMarker(0.8, () -> {
+                                b.setTilt(tiltPlacePos + (prop == 1 ? 0.02 : (prop == 2 ? 0.02 : 0.02)));
                                 b.setArmPickup(false);
                             })
-                            .addTemporalMarker(2.3, () -> {
+                            .addTemporalMarker(1.5, () -> {
                                 b.setClawOpen(true);
                             })
-                            .addTemporalMarker(2.7, () -> {
+                            .addTemporalMarker(2, () -> {
                                 b.setSlideTarget(1000);
                             })
-                            .addTemporalMarker(3.2, () ->{
+                            .addTemporalMarker(2, () ->{
                                 curMoveID++;
                             })
                             .build());

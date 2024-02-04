@@ -48,14 +48,14 @@ public class RedStacks extends LinearOpMode {
             if (curMoveID ==0) {
                 ad.setWeBeProppin(true);
                 cooldown.reset();
-                while (cooldown.milliseconds() < 1000) {
+                while (cooldown.milliseconds() < 2000) {
                     ad.tick();
                 }
                 prop = ad.getProp();
                 if (prop !=0) { // add a timeout or make getprop rly robust
                     if (prop == 1) {
                         b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(new Pose2d(-36, -64, PI / 2))
-                                .addTrajectory(genCrazyTrajectory(new Pose2d(-36, -64, PI / 2), new Pose2d(-39, -36, 5 * PI / 6), new Pose2d(-1, 2, 0), new Pose2d(-8, 5, 0), new Pose2d(1, 1, 0), new Pose2d(1, 1, 0)))
+                                .addTrajectory(genCrazyTrajectory(new Pose2d(-36, -64, PI / 2), new Pose2d(-42, -40, 5 * PI / 6), new Pose2d(-1, 2, 0), new Pose2d(-8, 5, 0), new Pose2d(1, 1, 0), new Pose2d(1, 1, 0)))
                                 .addTrajectory(genCrazyTrajectory(new Pose2d(-39, -36, 5 * PI / 6), new Pose2d(36, -30, 0), new Pose2d(130, -100, -0.06), new Pose2d(0, -24, 0.06), new Pose2d(-2350, 2400, 0), new Pose2d(1007, -100, 0.003)))
                                 .build());
                     }else if(prop == 2) {
@@ -65,8 +65,8 @@ public class RedStacks extends LinearOpMode {
                                 .build());
                     }else {
                         b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(new Pose2d(-36, -64, PI / 2))
-                                .addTrajectory(genCrazyTrajectory(new Pose2d(-36, -64, PI/2), new Pose2d(-31,-36, PI/6), new Pose2d(1, 2, 0.01), new Pose2d(8,5, -.06), new Pose2d(1,1,0), new Pose2d(1,1, 0)))
-                                .addTrajectory(genCrazyTrajectory(new Pose2d(-31,-36, PI/6), new Pose2d(36, -30, 0), new Pose2d(-120, -70, 0), new Pose2d(0, -90, 0), new Pose2d(200, 1800, 0), new Pose2d(800, -500, 0)))
+                                .addTrajectory(genCrazyTrajectory(new Pose2d(-36, -64, PI/2), new Pose2d(-36,-36, PI/6), new Pose2d(1, 2, 0.01), new Pose2d(8,5, -.06), new Pose2d(1,1,0), new Pose2d(1,1, 0)))
+                                .addTrajectory(genCrazyTrajectory(new Pose2d(-31,-36, PI/6), new Pose2d(36, -30, 0), new Pose2d(-120, -70, 0), new Pose2d(0, -90, 0), new Pose2d(200, 2200, 0), new Pose2d(800, -600, 0)))
                                 .build());
                     }
                     done = true;
@@ -99,7 +99,7 @@ public class RedStacks extends LinearOpMode {
                 if (!b.rr.isBusy()){
                     b.setSlideTarget(900);
                     b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(new Pose2d(36, -28, 0))
-                            .lineToLinearHeading(new Pose2d(57, prop == 1 ? -32 : (prop == 2 ? -39 :  -50), 0))
+                            .lineToLinearHeading(new Pose2d(54, prop == 1 ? -32 : (prop == 2 ? -43 :  -48), 0))
                             .waitSeconds(3)
                             .addTemporalMarker(0, () -> {
                                 b.setSlideTarget(900);
@@ -109,7 +109,7 @@ public class RedStacks extends LinearOpMode {
                             })
                             .addTemporalMarker(1.5, () -> {
                                 //b.setTilt(tiltPlacePos + prop == 1 ? 0.05 : 0.03);
-                                b.setTilt(tiltPlacePos);
+                                b.setTilt(tiltPlacePos + (prop == 3 ? 0.04 : 0));
                                 b.setArmPickup(false);
                             })
                             .addTemporalMarker(1.8, ()->{

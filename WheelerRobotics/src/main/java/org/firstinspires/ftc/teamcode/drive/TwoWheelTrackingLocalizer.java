@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.drive;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.localization.TwoTrackingWheelLocalizer;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -32,16 +33,18 @@ import java.util.List;
  *    |              |
  *    \--------------/
  *
+ *
  */
+@Config
 public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
     public static double TICKS_PER_REV = 8192;
     public static double WHEEL_RADIUS = 0.5905; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
     public static double PARALLEL_X = 6.625; // X is the up and down direction
-    public static double PARALLEL_Y = 3.125; // Y is the strafe direction
+    public static double PARALLEL_Y = 2; // Y is the strafe direction
 
-    public static double PERPENDICULAR_X = 6.625;
+    public static double PERPENDICULAR_X = 5.7;
     public static double PERPENDICULAR_Y = 0;
 
     public static double X_MULTIPLIER = 121/-52.10374632660827;//72/59.69282809327389; // Multiplier in the X direction
@@ -98,8 +101,8 @@ public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
         //  compensation method
 
         return Arrays.asList(
-                encoderTicksToInches(parallelEncoder.getRawVelocity()*X_MULTIPLIER),
-                encoderTicksToInches(perpendicularEncoder.getRawVelocity()*Y_MULTIPLIER)
+                encoderTicksToInches(parallelEncoder.getCorrectedVelocity()*X_MULTIPLIER),
+                encoderTicksToInches(perpendicularEncoder.getCorrectedVelocity()*Y_MULTIPLIER)
         );
     }
 }

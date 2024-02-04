@@ -31,7 +31,7 @@ import java.util.List;
 
 @Config
 public class DualAprilPropPipeline extends OpenCvPipeline {
-    public static int propSize = 3000;
+    public static int propSize = 5000;
     public static int xcutoff = 200;
     public static int hMax, hMin, sMax, sMin, lMax, lMin;
     public int pos = 0;
@@ -64,8 +64,8 @@ public class DualAprilPropPipeline extends OpenCvPipeline {
             lMax = 255;
 
             hMin = 100;
-            sMin = 50;
-            lMin = 200;
+            sMin = 50;// 50 bef
+            lMin = 0; // 200 bef
         }
     }
 

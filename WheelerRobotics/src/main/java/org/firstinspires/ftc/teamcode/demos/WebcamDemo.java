@@ -35,7 +35,8 @@ public class WebcamDemo extends LinearOpMode {
         b.init(hardwareMap);
         // simple class for viewing camera feed and testing processors
         PropAprilDet ad = new PropAprilDet();
-        ad.init(hardwareMap, "Front", false);
+        ad.init(hardwareMap, "Front", false
+        );
         b.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         tele.addData("DEBUG", "inited");
         tele.update();

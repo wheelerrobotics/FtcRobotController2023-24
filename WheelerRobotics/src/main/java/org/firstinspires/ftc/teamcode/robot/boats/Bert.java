@@ -33,7 +33,12 @@ public class Bert  extends Meccanum implements Robot {
 
     DcMotor slides, rightHang, leftHang, spinners;
     public SampleMecanumDrive rr = null;
-    private Servo claw, leftSlide, rightSlide, tilt, plane;
+    private Servo claw, leftSlide, rightSlide, tilt, plane, rightShuv, leftShuv;
+    public static double rightShuvDown = 0.93;
+    public static double rightShuvUp = 0;
+    public static double leftShuvDown = 0.04;
+    public static double leftShuvUp = 1;
+
     Telemetry tele = FtcDashboard.getInstance().getTelemetry();
     public void teleinit(HardwareMap hardwareMap) {
         // internal IMU setup (copied and pasted, idk what it really does, but it works)
@@ -86,6 +91,8 @@ public class Bert  extends Meccanum implements Robot {
         rightSlide = hardwareMap.servo.get("rightSlide");
         tilt = hardwareMap.servo.get("tilt");
         plane = hardwareMap.servo.get("plane");
+        rightShuv = hardwareMap.servo.get("rightShove");
+        leftShuv = hardwareMap.servo.get("leftShove");
 
 
         // Reverse the left side motors and set behaviors to stop instead of coast
@@ -117,13 +124,14 @@ public class Bert  extends Meccanum implements Robot {
     public static double planeLauncedPos = 0.8;
     public static double planeReadyPos = 0;
     public static double tiltSlideThreshold = 800;
-    public static double tiltPlacePos = 0.43;
-    public static double tiltPickupPos = 0.31;
-    public static double armPickupPos = 0.91;
+    public static double tiltPlacePos = 0.23;
+    public static double tiltPickupPos = 0.29;
+    public static double armPickupPos = 0.86;
     public static double armSlideThreshold = 800;
-    public static double armPlacePos = 0.45;
+    public static double armPlacePos = 0.3;
     public static double slidePlacePos = 1600;
     public static double slidePickupPos = 0;
+
 
     public boolean getClawOpen() {
         return claw.getPosition() == clawOpenPos;
@@ -148,6 +156,12 @@ public class Bert  extends Meccanum implements Robot {
     }
     public void setPlaneLaunched(boolean launched) {
         plane.setPosition(launched ? planeLauncedPos : planeReadyPos); // NEED TO TEST VALS
+    }
+    public void setRightShuv(double position) {
+        rightShuv.setPosition(position);
+    }
+    public void setLeftShuv(double position) {
+        leftShuv.setPosition(position);
     }
     public void incrementTilt(double increment) {
         tilt.setPosition(tilt.getPosition() + increment);
@@ -470,7 +484,7 @@ public class Bert  extends Meccanum implements Robot {
             if (p > -0.05 && p < 0.25 && pos < 400 && downCorrection) { // let it go farther down
                 p = st.pos > 0 ? correctionFactor : 0.15;
             }
-            return p;
+            return p * (SLIDE_TARGETING ? 0.5 : 1);
         }
 
         public void driveSlides(double p) {
