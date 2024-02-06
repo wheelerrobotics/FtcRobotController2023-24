@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.autotests.main;
 
+import static org.firstinspires.ftc.teamcode.autotests.Auto.incrementer;
 import static org.firstinspires.ftc.teamcode.helpers.CrazyTrajectoryGenerator.genCrazyTrajectory;
 import static org.firstinspires.ftc.teamcode.robot.boats.Bert.leftShuvDown;
 import static org.firstinspires.ftc.teamcode.robot.boats.Bert.tiltPlacePos;
@@ -8,6 +9,7 @@ import static java.lang.Math.PI;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.MarkerCallback;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -15,6 +17,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.helpers.PropAprilDet;
 import org.firstinspires.ftc.teamcode.robot.boats.Bert;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @Autonomous
 public class BlueBackdropPlus extends LinearOpMode {
@@ -26,8 +34,11 @@ public class BlueBackdropPlus extends LinearOpMode {
     Bert b = null;
     PropAprilDet ad = null;
     Telemetry tele = null;
-    boolean done = false;
-
+    boolean done = true;
+    TrajectorySequence kuwait = null;
+    Thread newThread = null;
+    ExecutorService threadpool = Executors.newCachedThreadPool();
+    Future<TrajectorySequence> futureTask = null;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -50,32 +61,50 @@ public class BlueBackdropPlus extends LinearOpMode {
         }
 
         while (opModeIsActive()) {
-
+            if (futureTask != null) {
+                if (futureTask.isDone()) {
+                    try {
+                        kuwait = futureTask.get();
+                    } catch (ExecutionException e) {
+                        throw new RuntimeException(e);
+                    }
+                    futureTask.cancel(true);
+                    threadpool.shutdown();
+                }
+            }
             if (curMoveID ==0) {
-                if (!b.rr.isBusy()) {
+                if (done) {
+                    done = false;
                     ad.setWeBeProppin(true);
                     cooldown.reset();
-                    while (cooldown.milliseconds() < 2000) {
+                    while (cooldown.milliseconds() < 500) {
                         ad.tick();
                     }
                     ad.tick();
                     prop = ad.getProp();
                     if (prop != 0) { // add a timeout or make getprop rly robust
+                        setKuwait(prop);
                         if (prop == 1) {
                             b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(b.rr.getPoseEstimate())
-                                    .addTrajectory(genCrazyTrajectory(new Pose2d(12, 64, -PI / 2), new Pose2d(14, 39, -PI / 6), new Pose2d(1, -2, 0), new Pose2d(8, -5, 0), new Pose2d(-1, -1, 0), new Pose2d(-1, -1, 0)))
+                                    .addTrajectory(genCrazyTrajectory(new Pose2d(12, 64, -PI / 2), new Pose2d(17, 39, -PI / 6), new Pose2d(1, -2, 0), new Pose2d(8, -5, 0), new Pose2d(-1, -1, 0), new Pose2d(-1, -1, 0)))
                                     .addTrajectory(genCrazyTrajectory(new Pose2d(15, 36, -PI / 6), new Pose2d(36, 44, 0), new Pose2d(-13, 12, -0.06), new Pose2d(0, -1, 0.06), new Pose2d(0, 1000, 0), new Pose2d(57, 0, 0.003)))
+                                    .addTrajectory(incrementer(b, increment))
+
                                     .build());
                         } else if (prop == 2) {
                             b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(b.rr.getPoseEstimate())
 
                                     .addTrajectory(genCrazyTrajectory(new Pose2d(12, 64, -PI / 2), new Pose2d(12, 38, -PI / 2), new Pose2d(0, -2, 0), new Pose2d(0, -5, 0), new Pose2d(1, 1, 0), new Pose2d(1, 1, 0)))
                                     .addTrajectory(genCrazyTrajectory(new Pose2d(12, 35, -PI / 2), new Pose2d(36, 44, 0), new Pose2d(0, 13, 0), new Pose2d(12, -12, 0), new Pose2d(0, 200, 0), new Pose2d(57, 0, 0)))
+                                    .addTrajectory(incrementer(b, increment))
+
                                     .build());
                         } else {
                             b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(b.rr.getPoseEstimate())
-                                    .addTrajectory(genCrazyTrajectory(new Pose2d(12, 64, -PI / 2), new Pose2d(12, 36, 7 * PI / 6), new Pose2d(-1, -2, 0.01), new Pose2d(-8, -5, -.06), new Pose2d(-1, -1, 0), new Pose2d(-1, -1, 0)))
+                                    .addTrajectory(genCrazyTrajectory(new Pose2d(12, 64, -PI / 2), new Pose2d(11, 36, 7 * PI / 6), new Pose2d(-1, -2, 0.01), new Pose2d(-8, -5, -.06), new Pose2d(-1, -1, 0), new Pose2d(-1, -1, 0)))
                                     .addTrajectory(genCrazyTrajectory(new Pose2d(8, 36, 7 * PI / 6), new Pose2d(36, 44, 0), new Pose2d(13, 12, 0.1), new Pose2d(0, -1, 0.06), new Pose2d(0, 1000, 0), new Pose2d(57, 0, 0.003)))
+                                    .addTrajectory(incrementer(b, increment))
+
                                     .build());
                         }
 
@@ -85,130 +114,105 @@ public class BlueBackdropPlus extends LinearOpMode {
             }
 
             if (curMoveID == 1) {
-                relocalize(new Pose2d(36, 44, 0), 4);
+                relocalize(new Pose2d(36, 44, 0), 1);
                 done = true;
             }
             if (curMoveID == 2) {
-                if (!b.rr.isBusy()){
+                if (done){
                     done = false;
-                    b.setSlideTarget(700);
                     b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(new Pose2d(36, 44, 0))
-                            .lineToLinearHeading(new Pose2d(50, prop == 1 ? 46 : (prop == 2 ? 34 :  26), 0))
-                                    .lineToLinearHeading(new Pose2d(40, prop == 1 ? 46 : (prop == 2 ? 34 :  26), 0))
+                            .waitSeconds(0.3)
+                            .lineToLinearHeading(new Pose2d(54, prop == 1 ? 49 : (prop == 2 ? 37 :  29), 0))
+                            .waitSeconds(0.8)
                             .addTemporalMarker(0, () -> {
-                                b.setSlideTarget(700);
+                                b.setSlideTarget(500);
                             })
-                            .addTemporalMarker(0.3, () -> {
+                            .addTemporalMarker(0.4, () -> {
                                 b.setClawOpen(false);
                             })
-                            .addTemporalMarker(0.8, () -> {
+                            .addTemporalMarker(0.9, () -> {
                                 b.setTilt(tiltPlacePos + (prop == 1 ? 0.02 : (prop == 2 ? 0.02 : 0.02)));
                                 b.setArmPickup(false);
                             })
-                            .addTemporalMarker(1.5, () -> {
+                            .addTemporalMarker(1.8, () -> {
                                 b.setClawOpen(true);
                             })
-                            .addTemporalMarker(2, () -> {
+                            .addTemporalMarker(1.9, () -> {
                                 b.setSlideTarget(1000);
                             })
+                            .addTemporalMarker(2.2, increment)
                             .build());
                 }
             }
             if (curMoveID == 3) {
                 if (done){
                     done = false;
-                    Pose2d curpos = prop == 1 ? new Pose2d(54, 44, 0) : (prop == 2 ? new Pose2d(54, 36, 0) : new Pose2d(54, 28, 0));
-                    b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(curpos)
-                            .addTemporalMarker(1, () -> {
-                                b.setClawOpen(true);
-                                b.setArmPickup(true);
-                                b.setTiltPickup(true);
-                                b.setSlideTarget(-10);
-                                b.spintake(-1);
-                            })
-                            .addTrajectory(genCrazyTrajectory(curpos, new Pose2d(-50, 16, 0), new Pose2d(-100, -10, 0), new Pose2d(40, 110, 0), new Pose2d(1000,-1200 + ((prop - 1) * 300),0), new Pose2d(1000,1400, 0)))
-
-                            .addTrajectory(genCrazyTrajectory(new Pose2d(-50, 16, 0), new Pose2d(36, 44, 0), new Pose2d(260, -20, 0), new Pose2d(0, 100, 0), new Pose2d(100,-200,0), new Pose2d(0,100, 0)))
-
-
-                            .addSpatialMarker(new Vector2d(-50, 0), ()->{
-                                b.setLeftShuv(leftShuvDown);
-                            }) // shuv down
-                            .addSpatialMarker(new Vector2d(-62, 5), ()->{
-                                //b.spintake(-1);
-                            }) // intake on
-                            .addSpatialMarker(new Vector2d(-60, 20), ()->{
-                                //b.spintake(-0.5);
-                            }) // intake reverse
-                            .addSpatialMarker(new Vector2d(-50, 20), ()->{
-                                //b.spintake(0);
-                                //b.setLeftShuv(leftShuvUp);
-                            }) // intake off & shuv up
-                            .build());
+                    b.rr.followTrajectorySequenceAsync(kuwait);
                 }
             }
             if (curMoveID == 4) {
-                relocalize(new Pose2d(36, 44, 0), 4);
+                relocalize(new Pose2d(36, 44, 0), 1);
                 done = true;
             }
             if (curMoveID == 5) {
-                if (!b.rr.isBusy()) done = true;
-                if (!b.rr.isBusy()){
+                if (done){
                     done = false;
-                    b.setSlideTarget(700);
                     b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(new Pose2d(36, 44, 0))
-                            .lineToLinearHeading(new Pose2d(57, 34, 0))
-                            .waitSeconds(0.9)
+                            .waitSeconds(0.5)
+                            .lineToLinearHeading(new Pose2d(54, 37, 0))
+                            .waitSeconds(0.7)
                             .addTemporalMarker(0, () -> {
-                                b.setSlideTarget(700);
+                                b.setSlideTarget(1200);
                             })
-                            .addTemporalMarker(1, () -> {
+                            .addTemporalMarker(0.7, () -> {
                                 b.setClawOpen(false);
                             })
-                            .addTemporalMarker(1.5, () -> {
+                            .addTemporalMarker(1.1, () -> {
                                 b.setTilt(tiltPlacePos + (prop == 1 ? 0.02 : (prop == 2 ? 0.02 : 0.02)));
                                 b.setArmPickup(false);
                             })
-                            .addTemporalMarker(2.2, () -> {
+                            .addTemporalMarker(2, () -> {
                                 b.setClawOpen(true);
                             })
-                            .addTemporalMarker(2.4, () -> {
-                                b.setSlideTarget(1000);
+                            .addTemporalMarker(2.1, () -> {
+                                b.setSlideTarget(1600);
                             })
+                            .addTemporalMarker(2.4, increment)
                             .build());
                 }
             }
             if (curMoveID == 6) {
-                if (!b.rr.isBusy()){
+                if (done){
                     done = false;
                     Pose2d curpos = new Pose2d(57, 36, 0);//prop == 1 ? new Pose2d(54, 44, 0) : (prop == 2 ? new Pose2d(54, 36, 0) : new Pose2d(54, 28, 0));
                     b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(curpos)
-                            .lineTo(new Vector2d(44, curpos.getY()))
-                            .strafeLeft(prop == 1 ? 20 : (prop == 2 ? 30 : 40))
-                            .forward(10)
+                            .back(10)
                             .addTemporalMarker(0.5, () -> {
                                 b.setClawOpen(true);
                                 b.setArmPickup(true);
                                 b.setTiltPickup(true);
                             })
-                            .addTemporalMarker(2, () -> {
+                            .addTemporalMarker(1, () -> {
                                 b.setDownCorrection(true);
                                 b.setDownCorrectionFactor(0.1);
                                 b.setSlideTarget(0);
                             })
+                            .addTemporalMarker(1, 0, increment)
+
                             .build());
                 }
             }
             if (curMoveID == 7) {
+                threadpool.shutdown();
                 return;
             }
             b.autoTick();
             tele.addData("curmove", curMoveID);
             tele.addData("busy", b.rr.isBusy());
             tele.update();
-            if (!b.rr.isBusy()) done = true;
+            //if (!b.rr.isBusy()) done = true;
             if (done) {
-                done = false;
+                //done = false;
                 curMoveID++;
                 tele.addData("curmove", curMoveID);
                 tele.update();
@@ -236,4 +240,45 @@ public class BlueBackdropPlus extends LinearOpMode {
         localizationCount = 0;
         return;
     }
+    public void setKuwait(double pos) {
+        futureTask = threadpool.submit(() -> {
+            Pose2d curpos = pos == 1 ? new Pose2d(54, 44, 0) : (pos == 2 ? new Pose2d(54, 36, 0) : new Pose2d(54, 28, 0));
+            return b.rr.trajectorySequenceBuilder(curpos)
+                    .addTrajectory(genCrazyTrajectory(curpos, new Pose2d(-40, 10, 0), new Pose2d(-100, -12, 0), new Pose2d(40, 110, 0), new Pose2d(1000,-1200 + ((pos - 1) * 300),0), new Pose2d(1000,1400, 0)))
+                    .addTrajectory(genCrazyTrajectory(new Pose2d(-60, 4, 0), new Pose2d(-59, 4, 0), new Pose2d(-2, 0, 0), new Pose2d(-1, 0, 0), new Pose2d(0,0,0), new Pose2d(0,0, 0)))
+
+                    .addTrajectory(genCrazyTrajectory(new Pose2d(-59, 10, 0), new Pose2d(-59, 12, 0), new Pose2d(0, 2, 0), new Pose2d(0, -2, 0.1), new Pose2d(0,0,0), new Pose2d(0,0, 0)))
+                    .addTrajectory(genCrazyTrajectory(new Pose2d(-61, 22, 0), new Pose2d(36, 44, 0), new Pose2d(20, -20, 0), new Pose2d(0, 100, 0), new Pose2d(100,-200,0), new Pose2d(300,-100, 0)))
+                    .addTemporalMarker(1, () -> {
+                        b.setClawOpen(true);
+                        b.setArmPickup(true);
+                        b.setTiltPickup(true);
+                        b.setSlideTarget(-80);
+                        b.setDownCorrectionFactor(0.2);
+                        b.setDownCorrection(true);
+                        b.spintake(-0.9);
+                    })
+                    .addSpatialMarker(new Vector2d(-30, 0), ()->{
+                        b.setLeftShuv(leftShuvDown);
+                    })
+                    // shuv down
+                    .addSpatialMarker(new Vector2d(-30, 20), ()->{
+                        b.spintake(0.5);
+                    })
+                    //.addSpatialMarker(new Vector2d(40, 20), ()->{
+                    //b.spintake(1);
+                    //}) // intake on
+                    //.addSpatialMarker(new Vector2d(-30, 20), ()->{
+                    //b.spintake(0);
+                    //}) // intake reverse
+                    /*.addSpatialMarker(new Vector2d(-30, 20), ()->{
+                        b.setDownCorrection(false);
+                    }) // intake off & shuv up
+*/
+                    .addTrajectory(incrementer(b, increment))
+                    .build();
+        });
+
+    }
+    public MarkerCallback increment = () ->{ done = true; };
 }
