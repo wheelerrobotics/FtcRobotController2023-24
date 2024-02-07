@@ -9,15 +9,11 @@ import static org.firstinspires.ftc.teamcode.robot.boats.Bert.slidePlacePos;
 import static org.firstinspires.ftc.teamcode.robot.boats.Bert.tiltPickupPos;
 import static java.lang.Math.abs;
 
-import android.content.Context;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -230,7 +226,6 @@ public class BerTele extends LinearOpMode {
                 tele.addData("error", e.getMessage());
                 tele.log();
             }
-            //checkCode(new Gamepad[]{gamepad1, gamepad2});
         }
         }
 
@@ -241,40 +236,4 @@ public class BerTele extends LinearOpMode {
         bMacroing = false;
     }
 
-    // ignore this it dont matter ;)
-    public boolean[] kKeysWerePressed = {false, false, false, false, false, false};
-    public boolean addCount = false;
-    public void checkCode(Gamepad[] gamepads) {
-        for (Gamepad gp : gamepads) {
-            if (kcount == 0 && gp.dpad_up && !kKeysWerePressed[0]) addCount = true;
-            if (kcount == 1 && gp.dpad_up && !kKeysWerePressed[0]) addCount = true;
-            else if (kcount == 1 && (gp.dpad_down || gp.dpad_right || gp.dpad_left || gp.a || gp.b || gp.start)) kcount = 0;
-            if (kcount == 2 && gp.dpad_down && !kKeysWerePressed[1]) addCount = true;
-            else if (kcount == 2 && (gp.dpad_up || gp.dpad_right || gp.dpad_left || gp.a || gp.b || gp.start)) kcount = 0;
-            if (kcount == 3 && gp.dpad_down && !kKeysWerePressed[1]) addCount = true;
-            else if (kcount == 3 && (gp.dpad_up || gp.dpad_right || gp.dpad_left || gp.a || gp.b || gp.start)) kcount = 0;
-            if (kcount == 4 && gp.dpad_left && !kKeysWerePressed[2]) addCount = true;
-            else if (kcount == 4 && (gp.dpad_up || gp.dpad_down || gp.dpad_right || gp.a || gp.b || gp.start)) kcount = 0;
-            if (kcount == 5 && gp.dpad_right && !kKeysWerePressed[3]) addCount = true;
-            else if (kcount == 5 && (gp.dpad_up || gp.dpad_down || gp.dpad_left || gp.a || gp.b || gp.start)) kcount = 0;
-            if (kcount == 6 && gp.dpad_left && !kKeysWerePressed[2]) addCount = true;
-            else if (kcount == 6 && (gp.dpad_up || gp.dpad_down || gp.dpad_right || gp.a || gp.b || gp.start)) kcount = 0;
-            if (kcount == 7 && gp.dpad_right && !kKeysWerePressed[3]) addCount = true;
-            else if (kcount == 7 && (gp.dpad_up || gp.dpad_down || gp.dpad_left || gp.a || gp.b || gp.start)) kcount = 0;
-            if (kcount == 8 && gp.b && !kKeysWerePressed[4]) addCount = true;
-            else if (kcount == 8 && (gp.dpad_up || gp.dpad_down || gp.dpad_right || gp.dpad_left || gp.a || gp.start)) kcount = 0;
-            if (kcount == 9 && gp.a && !kKeysWerePressed[5]) addCount = true;
-            else if (kcount == 9 && (gp.dpad_up || gp.dpad_down || gp.dpad_right || gp.dpad_left || gp.b || gp.start)) kcount = 0;
-            if (kcount == 10 && gp.start && !kKeysWerePressed[6]) addCount = true;
-            else if (kcount == 10 && (gp.dpad_up || gp.dpad_down || gp.dpad_right || gp.dpad_left || gp.a || gp.b)) kcount = 0;
-            kKeysWerePressed = new boolean[]{gp.dpad_up, gp.dpad_down, gp.dpad_left, gp.dpad_right, gp.b, gp.a, gp.start};
-            if (addCount) kcount++;
-            if (kcount == 11) {
-                kcount = 0;
-                int startupID = hardwareMap.appContext.getResources().getIdentifier("cucumberslumber.mp3", "raw", hardwareMap.appContext.getPackageName());
-                Context appContext = hardwareMap.appContext;
-                SoundPlayer.getInstance().startPlaying(appContext, startupID);
-            }
-        }
-    }
 }

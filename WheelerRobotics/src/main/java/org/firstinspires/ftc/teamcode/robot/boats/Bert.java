@@ -36,7 +36,7 @@ public class Bert  extends Meccanum implements Robot {
     private Servo claw, leftSlide, rightSlide, tilt, plane, rightShuv, leftShuv;
     public static double rightShuvDown = 0.93;
     public static double rightShuvUp = 0;
-    public static double leftShuvDown = 0.07;
+    public static double leftShuvDown = 0.04;
     public static double leftShuvUp = 1;
 
     Telemetry tele = FtcDashboard.getInstance().getTelemetry();

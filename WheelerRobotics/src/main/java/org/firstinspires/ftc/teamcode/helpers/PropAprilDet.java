@@ -135,7 +135,7 @@ public class PropAprilDet {
                 // filter flips
 
                 for (AprilTagDetection i : detections) {
-                    if (i.id != (nb ? 4 : 1)) continue;
+                    if (i.id != (nb ? 4 : 2)) continue;
                     gp = Globalpositioning.find_global_pose(i);
                     if (gp.rotation_x > 0.3) continue;
 

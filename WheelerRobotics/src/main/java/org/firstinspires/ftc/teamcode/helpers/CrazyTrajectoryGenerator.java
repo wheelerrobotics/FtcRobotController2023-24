@@ -35,6 +35,23 @@ public class CrazyTrajectoryGenerator {
             new ProfileAccelerationConstraint(DriveConstants.MAX_ACCEL),
             new ProfileAccelerationConstraint(DriveConstants.MAX_ANG_ACCEL)
     ));
+    public static Trajectory genCrazyTrajectoryConstrained(Pose2d startPose, Pose2d endPose, Pose2d startD, Pose2d endD, Pose2d startD2, Pose2d endD2, double maxVel, double maxAccel){
+        return TrajectoryGenerator.INSTANCE.generateTrajectory(new Path(
+                new PathSegment(
+                        new QuinticSpline(
+                                new QuinticSpline.Knot(startPose.vec(), startD.vec(), startD2.vec()),
+                                new QuinticSpline.Knot(endPose.vec(), endD.vec(), endD2.vec()),
+                                maxDK, maxSegLen, maxDepth), // no clue whst these numbers do,
+                        new SplineInterpolator(
+                                startPose.getHeading(),
+                                endPose.getHeading(),
+                                startD.getHeading(),
+                                startD2.getHeading(),
+                                endD.getHeading(),
+                                endD2.getHeading())
+                )
+        ), getVelocityConstraint(maxVel, MAX_ANG_VEL, TRACK_WIDTH), getAccelerationConstraint(maxAccel));
+    }
     public static Trajectory genCrazyTrajectory(Pose2d startPose, Pose2d endPose, Pose2d startD, Pose2d endD, Pose2d startD2, Pose2d endD2){
         return TrajectoryGenerator.INSTANCE.generateTrajectory(new Path(
                 new PathSegment(
