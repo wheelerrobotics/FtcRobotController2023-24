@@ -32,7 +32,11 @@ import java.util.List;
 @Config
 public class DualAprilPropPipeline extends OpenCvPipeline {
     public static int propSize = 5000;
+    public static int pixelSize = 3000;
+    public boolean notB = false;
     public static int xcutoff = 200;
+    public boolean yellow = false;
+    public static int yhMax, yhMin, ysMax, ysMin, ylMax, ylMin;
     public static int hMax, hMin, sMax, sMin, lMax, lMin;
     public int pos = 0;
     public boolean weBeProppin = true;
@@ -45,7 +49,7 @@ public class DualAprilPropPipeline extends OpenCvPipeline {
         this.fy = fy;
         this.cx = cx;
         this.cy = cy;
-
+        this.notB = notBlue;
         constructMatrix();
 
         // Allocate a native context object. See the corresponding deletion in the finalizer
@@ -79,7 +83,7 @@ public class DualAprilPropPipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
-        Core.flip(input, input, -1);
+        if (!notB) Core.flip(input, input, -1);
         //Drawing the Contours
         try {
 
@@ -169,6 +173,10 @@ public class DualAprilPropPipeline extends OpenCvPipeline {
                 Imgproc.cvtColor(input, temp, COLOR_BGR2HSV);
                 Scalar low = new Scalar(hMin, sMin, lMin);
                 Scalar high = new Scalar(hMax, sMax, lMax);
+                if (yellow) {
+                    low = new Scalar(yhMin, ysMin, ylMin);
+                    high = new Scalar(yhMax, ysMax, ylMax);
+                }
                 Mat mask = new Mat();
                 inRange(temp, low, high, mask);
                 List<MatOfPoint> contours = new ArrayList<>();
@@ -180,16 +188,18 @@ public class DualAprilPropPipeline extends OpenCvPipeline {
                 List<Double> areas = new ArrayList<>();
                 int position = 0;
 
+                if (yellow) contours.removeIf(c -> contourArea(c) < pixelSize);
                 contours.removeIf(c -> contourArea(c) < propSize);
 
                 if (contours.size() == 1) {
-
                     Rect rect3 = boundingRect(contours.get(0));
 
                     if (rect3.x > xcutoff) pos = 3;
                     else pos = 2;
+                    if (yellow) pos = 1;
                 } if (contours.size() == 0) {
                     pos = 1;
+                    if (yellow) pos = 0;
                 }
                 FtcDashboard.getInstance().getTelemetry().addData("pos", pos);
                 FtcDashboard.getInstance().getTelemetry().update();

@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.autotests.main;
 
 import static org.firstinspires.ftc.teamcode.autotests.Auto.getPropPos;
 import static org.firstinspires.ftc.teamcode.autotests.Auto.incrementer;
-import static org.firstinspires.ftc.teamcode.autotests.Auto.relocalize;
+import static org.firstinspires.ftc.teamcode.autotests.Auto.relocalizeB;
 import static org.firstinspires.ftc.teamcode.helpers.CrazyTrajectoryGenerator.genCrazyTrajectory;
 import static org.firstinspires.ftc.teamcode.robot.boats.Bert.tiltPlacePos;
 import static java.lang.Math.PI;
@@ -78,7 +78,7 @@ public class AutoResystem extends LinearOpMode {
             }
             if (curMoveID == 1 && done) {
                 done = false; // redundant, but here to stay consistent
-                relocalize(b, ad, new Pose2d(36, 44, 0), 2);
+                relocalizeB(b, ad, new Pose2d(36, 44, 0), 2);
                 done = true;
             }
             if (curMoveID == 3 && done) {

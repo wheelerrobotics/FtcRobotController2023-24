@@ -177,7 +177,7 @@ public class Bert  extends Meccanum implements Robot {
     private void setTiltUNSAFE(double position) {
         tilt.setPosition(position * 0.96); // thats the max without stalling on the bucket
     }
-    private void setClawOpenUNSAFE(boolean open) {
+    public void setClawOpenUNSAFE(boolean open) {
         claw.setPosition(open ? clawOpenPos : clawClosedPos); // NEED TO TEST FOR VALS
     }
     private void setArmUNSAFE(double position) {

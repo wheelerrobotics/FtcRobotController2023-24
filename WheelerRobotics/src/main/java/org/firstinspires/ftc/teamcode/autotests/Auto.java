@@ -33,7 +33,21 @@ public class Auto {
         ad.tick();
         return ad.getProp() == 0 ? 2 : ad.getProp();
     }
-    public static void relocalize(Bert b, PropAprilDet ad, Pose2d target, int count) {
+    public static void relocalizeR(Bert b, PropAprilDet ad, Pose2d target, int count) {
+        int localizationCount = 0;
+        while (localizationCount < count) {
+            ad.setWeBeProppin(false);
+            ad.getDetected(); // update
+
+            if (ad.pos != null)
+                b.rr.setPoseEstimate(new Pose2d(ad.pos.getX() - 7.875, ad.pos.getY() - 7, b.rr.getPoseEstimate().getHeading()));
+            b.rr.followTrajectorySequence(b.rr.trajectorySequenceBuilder(b.rr.getPoseEstimate()).lineToLinearHeading(target).build());
+            //curMoveID++;
+            localizationCount++;
+        }
+        return;
+    }
+    public static void relocalizeB(Bert b, PropAprilDet ad, Pose2d target, int count) {
         int localizationCount = 0;
         while (localizationCount < count) {
             ad.setWeBeProppin(false);
@@ -74,10 +88,35 @@ public class Auto {
                 .addTemporalMarker(2.2, incrementer)
                 .build();
     }
+
+    public static TrajectorySequence placerRedAnyHeight(Bert b, double prop, MarkerCallback incrementer, double height) {
+        return b.rr.trajectorySequenceBuilder(new Pose2d(36, -44, 0))
+                .waitSeconds(0.3)
+                .lineToLinearHeading(new Pose2d(52, prop == 1 ? -42 : (prop == 2 ? -36 : -28), 0))
+                .waitSeconds(0.8)
+                .addTemporalMarker(0, () -> {
+                    b.setSlideTarget(height);
+                })
+                .addTemporalMarker(0.2, () -> {
+                    b.setClawOpen(false);
+                })
+                .addTemporalMarker(0.6, () -> {
+                    b.setTilt(tiltPlacePos + 0.06);
+                    b.setArmPickup(false);
+                })
+                .addTemporalMarker(1.8, () -> {
+                    b.setClawOpen(true);
+                })
+                .addTemporalMarker(1.9, () -> {
+                    b.setSlideTarget(height + 600);
+                })
+                .addTemporalMarker(2.2, incrementer)
+                .build();
+    }
     public static TrajectorySequence placerBlueLow(Bert b, double prop, MarkerCallback incrementer) {
         return b.rr.trajectorySequenceBuilder(new Pose2d(36, 44, 0))
                 .waitSeconds(0.3)
-                .lineToLinearHeading(new Pose2d(52, prop == 1 ? 44 : (prop == 2 ? 36 : 28), 0))
+                .lineToLinearHeading(new Pose2d(52, prop == 1 ? 46 : (prop == 2 ? 38 : 30), 0))
                 .waitSeconds(0.8)
                 .addTemporalMarker(0, () -> {
                     b.setSlideTarget(500);

@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.autotests.main;
 
 import static org.firstinspires.ftc.teamcode.autotests.Auto.getPropPos;
 import static org.firstinspires.ftc.teamcode.autotests.Auto.incrementer;
-import static org.firstinspires.ftc.teamcode.autotests.Auto.relocalize;
+import static org.firstinspires.ftc.teamcode.autotests.Auto.relocalizeB;
 import static org.firstinspires.ftc.teamcode.helpers.CrazyTrajectoryGenerator.genCrazyTrajectoryConstrained;
 import static org.firstinspires.ftc.teamcode.robot.boats.Bert.tiltPlacePos;
 import static java.lang.Math.PI;
@@ -18,7 +18,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.helpers.PropAprilDet;
 import org.firstinspires.ftc.teamcode.robot.boats.Bert;
-
+//GOOD THERETICALL (1&2)
 @Autonomous
 public class BlueStacks extends LinearOpMode {
     public int localizationCount = 0;
@@ -85,7 +85,7 @@ public class BlueStacks extends LinearOpMode {
             if (curMoveID == 1 && done) {
                // b.rr.setPoseEstimate(new Pose2d(36, 40, 0)); //FOR TESTING TAKE OUT IN REAL
                 done = false; // redundant, but here to stay consistent
-                relocalize(b, ad, new Pose2d(36, 44, 0), 4);
+                relocalizeB(b, ad, new Pose2d(36, 44, 0), 4);
                 done = true;
             }
             if (curMoveID == 3 && done) {
