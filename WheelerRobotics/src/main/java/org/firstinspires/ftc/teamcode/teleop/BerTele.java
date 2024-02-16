@@ -23,14 +23,17 @@ import org.firstinspires.ftc.teamcode.robot.boats.Bert;
 @Config
 @TeleOp
 public class BerTele extends LinearOpMode {
-    public static double extraTilt = 0.15;
+    public static double extraTilt = 0.1;
+    public static double counterThresh = 10;
     public static double aPos = 0.3;
     public static double tPos = 0;
     public static boolean cPos = false;
     public static boolean pPos = false;
 
     public static double target = 0;
-    public static double SLOWDOWN = 0.5;
+    public static double SLOWDOWN = 0.6;
+    public static double SLOWDOWN2 = 0.5;
+    public static double SPEEDDOWN = 0.5;
     public boolean holdingPosition = false;
     public double lastSlidePos = 0;
 
@@ -116,6 +119,11 @@ public class BerTele extends LinearOpMode {
                     b.setClawOpen(!b.getClawOpen());
                 } else if (!gamepad2.x) xWasPressed = false;
 
+                if (gamepad2.right_bumper) {
+                    cancelMacros();
+                    if (!b.getTiltPickup()) b.setTilt(tiltPlacePos + extraTilt);
+                }else if (b.getTiltPos() == tiltPlacePos + extraTilt) b.setTilt(tiltPlacePos);
+
                 //if (gamepad2.y && !yWasPressed) {
                 //    cancelMacros();
                 //    yWasPressed = true;
@@ -124,10 +132,10 @@ public class BerTele extends LinearOpMode {
                 //} else if (!gamepad2.y) yWasPressed = false;
 
                 // for daniel :)
-                if (gamepad1.left_bumper && gamepad1.dpad_up && !lastDirectionToggle) {
-                    lastDirectionToggle = true;
-                    permaDirectionMultiplier *= -1;
-                } else if (gamepad1.left_bumper || gamepad1.dpad_up) lastDirectionToggle = false;
+                //if (gamepad1.left_bumper && gamepad1.dpad_up && !lastDirectionToggle) {
+                //    lastDirectionToggle = true;
+                //    permaDirectionMultiplier *= -1;
+                //} else if (gamepad1.left_bumper || gamepad1.dpad_up) lastDirectionToggle = false;
 
                 if (gamepad2.a && !aWasPressed) {
                     cancelMacros();
@@ -143,9 +151,6 @@ public class BerTele extends LinearOpMode {
                 //    b.setSlideTarget(slidePickupPos);
                 //}else if (!gamepad2.y) yWasPressed = false;
 
-                if (gamepad2.right_bumper && !b.getTiltPickup()) b.setTilt(tiltPlacePos + extraTilt);
-                else if (!gamepad2.right_bumper && b.getTiltPos() == tiltPlacePos + extraTilt) b.setTilt(tiltPlacePos);
-
                 if (gamepad2.b && !bWasPressed) {
                     cancelMacros();
                     bMacroing = true;
@@ -156,7 +161,7 @@ public class BerTele extends LinearOpMode {
 
                 if (yMacroing) {
                     b.setClawOpenUNSAFE(false);
-                    if (abs(b.getSlidePos() - lastSlidePos) <= 2) { // done moving
+                    if (abs(b.getSlidePos() - lastSlidePos) <= 8) { // done moving MIGHT BREAK SHIT
                         b.resetSlides();
                         b.setClawOpenUNSAFE(true);
                         yMacroing = false;
@@ -201,12 +206,12 @@ public class BerTele extends LinearOpMode {
                         b.setSlideTargeting(false);
                     }
                 }
-                if (gamepad2.dpad_down && gamepad2.left_bumper) {
+                if (gamepad2.dpad_down) { // just dpad down
                     b.resetSlides();
                 }
                 if (!(gamepad2.right_bumper && gamepad2.left_bumper)) {
                     b.spintake(-gamepad2.left_stick_y);
-                    if (gamepad2.left_stick_y == -1) { // maxed spintake -> activate B macro
+                    if (gamepad2.left_stick_y == -1) { // maxed spintake -> activate B macro BAD IDEA
                         //cancelMacros(); // technically redundant
                         //bMacroing = true;
                         //b.setSlideTarget(slidePickupPos);
@@ -219,9 +224,7 @@ public class BerTele extends LinearOpMode {
                         b.driveSlides(-gamepad2.right_stick_y);
                     }
                     if (holdingPosition) b.setSlideTargeting(true);
-                    if (gamepad2.right_stick_y != 0) {
-                        holdingPosition = false;
-                    }
+                    if (gamepad2.right_stick_y != 0) holdingPosition = false;
                     //b.tick();
                     b.driveHangs(gamepad2.right_trigger - gamepad2.left_trigger);
                     if (gamepad2.right_bumper && gamepad2.dpad_up && !planeLaunched) {
@@ -247,13 +250,22 @@ public class BerTele extends LinearOpMode {
                 if (gamepad2.left_stick_y + gamepad2.right_stick_y +
                         gamepad2.left_stick_x + gamepad2.right_stick_x != 0) cancelMacros();
 
-                if (gamepad1.left_bumper) tempDirectionMultiplier = -1;
+                if (gamepad1.left_bumper) tempDirectionMultiplier = SPEEDDOWN;
                 else tempDirectionMultiplier = 1;
 
-                b.motorDriveXYVectors(tempDirectionMultiplier * permaDirectionMultiplier * gamepad1.left_stick_x, tempDirectionMultiplier * permaDirectionMultiplier * -gamepad1.left_stick_y, (gamepad1.right_bumper ? 1 : SLOWDOWN) * gamepad1.right_stick_x);
+                b.motorDriveXYVectors(tempDirectionMultiplier * permaDirectionMultiplier * gamepad1.left_stick_x, tempDirectionMultiplier * permaDirectionMultiplier * -gamepad1.left_stick_y, (gamepad1.right_bumper ? 1 : SLOWDOWN) * (gamepad1.left_bumper ? SLOWDOWN2 : 1) * gamepad1.right_stick_x);
                 //b.fieldCentricDrive(directionMultiplier * gamepad1.left_stick_x, directionMultiplier * -gamepad1.left_stick_y, (gamepad1.right_bumper ? 1 : SLOWDOWN) * gamepad1.right_stick_x);
-                if (gamepad2.left_stick_y == 0 && gamepad1.left_trigger > 0) { // if player 2 not controlling intake, let player 1
-                    b.spintake(gamepad1.left_trigger - gamepad1.right_trigger);
+                if (gamepad2.left_stick_y == 0 && gamepad1.a) { // if player 2 not controlling intake, let player 1
+                    b.spintake(-1);
+                }
+                if (gamepad2.left_stick_y == 0 && gamepad1.b) { // if player 2 not controlling intake, let player 1
+                    b.spintake(-0.6);
+                }
+                if (gamepad2.left_stick_y == 0 && gamepad1.x) { // if player 2 not controlling intake, let player 1
+                    b.spintake(0.6);
+                }
+                if (gamepad2.left_stick_y == 0 && gamepad1.y) { // if player 2 not controlling intake, let player 1
+                    b.spintake(1);
                 }
                 if (gamepad1.right_trigger > 0) {
                     b.setLeftShuv(leftShuvDown);

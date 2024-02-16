@@ -100,7 +100,7 @@ public class BlueBackdrop extends LinearOpMode {
                     done = false;
                     b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(new Pose2d(36, 44, 0))
                             .waitSeconds(0.4)
-                            .lineToLinearHeading(new Pose2d(57, prop == 1 ? 46 : (prop == 2 ? 34 :  26), 0))
+                            .lineToLinearHeading(new Pose2d(57, prop == 1 ? 46 : (prop == 2 ? 34 :  29), 0))
                             .waitSeconds(0.9)
                             .addTemporalMarker(0, () -> {
                                 b.setSlideTarget(700);
@@ -118,7 +118,7 @@ public class BlueBackdrop extends LinearOpMode {
                             .addTemporalMarker(2, () -> {
                                 b.setSlideTarget(1000);
                             })
-                            .addTemporalMarker(1, 0, increment)
+                            .addTemporalMarker(2.1, increment)
                             .build());
                 }
             }
@@ -142,7 +142,7 @@ public class BlueBackdrop extends LinearOpMode {
                                 b.setDownCorrectionFactor(0.1);
                                 b.setSlideTarget(0);
                             })
-                            .addTemporalMarker(2, increment)
+                            .addTemporalMarker(6, increment)
 
                             .build());
                 }

@@ -67,7 +67,7 @@ public class RedBackdrop extends LinearOpMode {
                     if (prop != 0) { // add a timeout or make getprop rly robust
                         if (prop == 1) {
                             b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(b.rr.getPoseEstimate())
-                                    .addTrajectory(genCrazyTrajectoryConstrained(new Pose2d(12, -64, PI/2), new Pose2d(14,-36, PI/6), new Pose2d(1, 2, 0.0), new Pose2d(8,5, 0), new Pose2d(1,1,0), new Pose2d(1,1, 0), 30, 20))
+                                    .addTrajectory(genCrazyTrajectoryConstrained(new Pose2d(12, -64, PI/2), new Pose2d(14,-39, PI/6), new Pose2d(1, 2, 0.0), new Pose2d(8,5, 0), new Pose2d(1,1,0), new Pose2d(1,1, 0), 30, 20))
                                     .addTrajectory(genCrazyTrajectory(new Pose2d(15, -36, PI / 6), new Pose2d(36, -44, 0), new Pose2d(-13, -12, 0.06), new Pose2d(0, 1, 0.06), new Pose2d(0, -1000, 0), new Pose2d(57, 0, -0.003)))
                                     .addTrajectory(incrementer(b, increment))
 
@@ -121,7 +121,7 @@ public class RedBackdrop extends LinearOpMode {
                             .addTemporalMarker(2.2, () -> {
                                 b.setSlideTarget(1000);
                             })
-                            .addTemporalMarker(1, 0, increment)
+                            .addTemporalMarker(2.3, increment)
                             .build());
                 }
             }
@@ -130,7 +130,7 @@ public class RedBackdrop extends LinearOpMode {
                     done = false;
                     Pose2d curpos = new Pose2d(57, -36, 0);//prop == 1 ? new Pose2d(54, 44, 0) : (prop == 2 ? new Pose2d(54, 36, 0) : new Pose2d(54, 28, 0));
                     b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(curpos)
-                            .back(10)
+                                    .back(5)
                             .strafeRight(40)
                             .forward(10)
                             .waitSeconds(2)
@@ -145,7 +145,7 @@ public class RedBackdrop extends LinearOpMode {
                                 b.setDownCorrectionFactor(0.1);
                                 b.setSlideTarget(0);
                             })
-                            .addTemporalMarker(2, increment)
+                            .addTemporalMarker(6, increment)
 
                             .build());
                 }

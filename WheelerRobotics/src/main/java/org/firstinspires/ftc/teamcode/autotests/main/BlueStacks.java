@@ -25,6 +25,7 @@ public class BlueStacks extends LinearOpMode {
     ElapsedTime cooldown;
     int curMoveID = 0;
     boolean firstTimeSlides = true;
+    boolean pixel = true;
 
     double prop = 3;
     boolean done = true;
@@ -52,12 +53,13 @@ public class BlueStacks extends LinearOpMode {
 
         while (opModeIsActive()) {
             if (curMoveID ==0 && done) {
+                sleep(5000);
                 b.rr.setPoseEstimate(new Pose2d(-36, 64, -PI/2));
                 done = false;
                 prop = getPropPos(ad, 2000, 2);
                 if (prop == 1) {
                     b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(b.rr.getPoseEstimate())
-                            .addTrajectory(genCrazyTrajectoryConstrained(new Pose2d(-36, 64, -PI/2), new Pose2d(-33.5,36, -PI/6), new Pose2d(1, -2, 0), new Pose2d(8,-5, 0), new Pose2d(-1,-1,0), new Pose2d(-1,-1, 0), 30, 20))
+                            .addTrajectory(genCrazyTrajectoryConstrained(new Pose2d(-36, 64, -PI/2), new Pose2d(-33.5,39, -PI/6), new Pose2d(1, -2, 0), new Pose2d(8,-5, 0), new Pose2d(-1,-1,0), new Pose2d(-1,-1, 0), 30, 20))
                             .addTrajectory(genCrazyTrajectoryConstrained(new Pose2d(-33, 36, -PI/6), new Pose2d(36, 44, 0), new Pose2d(-80, 40, 0.03), new Pose2d(0, 90, 0), new Pose2d(-400, -1800, -0.001), new Pose2d(1500, 500, 0), 30, 20))
                             .addTrajectory(incrementer(b, increment))
 
@@ -88,6 +90,15 @@ public class BlueStacks extends LinearOpMode {
                 relocalizeB(b, ad, new Pose2d(36, 44, 0), 4);
                 done = true;
             }
+            if (curMoveID == 2 && done) {
+                ad.setYellow(true);
+                ad.setWeBeProppin(true);
+                cooldown.reset();
+                while (cooldown.milliseconds() < 2000) {
+                    ad.tick();
+                    pixel = ad.getProp() == 1;
+                }
+            }
             if (curMoveID == 3 && done) {
                 done = false;
                 b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(new Pose2d(36, 44, 0))
@@ -95,9 +106,9 @@ public class BlueStacks extends LinearOpMode {
                         .lineToLinearHeading(new Pose2d(52, prop == 1 ? 42 : (prop == 2 ? 36 :  28), 0))
                         .waitSeconds(0.8)
                         .addTemporalMarker(0, () -> {
-                            b.setSlideTarget(800);
+                            b.setSlideTarget(pixel ? 1000 : 600);
                         })
-                        .addTemporalMarker(0.4, () -> {
+                        .addTemporalMarker(0.1, () -> {
                             b.setClawOpen(false);
                         })
                         .addTemporalMarker(0.6, () -> {

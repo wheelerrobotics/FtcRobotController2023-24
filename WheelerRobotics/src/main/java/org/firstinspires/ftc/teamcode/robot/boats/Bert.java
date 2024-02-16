@@ -34,6 +34,7 @@ public class Bert  extends Meccanum implements Robot {
     DcMotor slides, rightHang, leftHang, spinners;
     public SampleMecanumDrive rr = null;
     private Servo claw, leftSlide, rightSlide, tilt, plane, rightShuv, leftShuv;
+    public static double rightServoOffset = 0.1;
     public static double rightShuvDown = 0.93;
     public static double rightShuvUp = 0;
     public static double leftShuvDown = 0.04;
@@ -182,17 +183,16 @@ public class Bert  extends Meccanum implements Robot {
     }
     private void setArmUNSAFE(double position) {
         leftSlide.setPosition(1-position);
-        rightSlide.setPosition(position);
+        rightSlide.setPosition(position+rightServoOffset);
     }
     public void setArm(double position) {
         if (st.pos < armSlideThreshold && cawtFailsafe) return;
         leftSlide.setPosition(1-position);
-        rightSlide.setPosition(position);
+        rightSlide.setPosition(position+rightServoOffset);
     }
     public void setArmPickup(boolean pickup) {
         if (st.pos < armSlideThreshold && cawtFailsafe) return;
-        leftSlide.setPosition(pickup ? 1-armPickupPos : 1-armPlacePos);
-        rightSlide.setPosition(pickup ? armPickupPos : armPlacePos);
+        setArm(pickup ? armPickupPos : armPlacePos);
     }
     public void setTiltPickup(boolean pickup) {
         if (st.pos < tiltSlideThreshold && cawtFailsafe) return;

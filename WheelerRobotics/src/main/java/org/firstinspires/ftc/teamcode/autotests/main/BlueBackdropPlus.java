@@ -206,7 +206,7 @@ public class BlueBackdropPlus extends LinearOpMode {
         futureTask = threadpool.submit(() -> {
             Pose2d curpos = pos == 1 ? new Pose2d(54, 44, 0) : (pos == 2 ? new Pose2d(54, 36, 0) : new Pose2d(54, 28, 0));
             return b.rr.trajectorySequenceBuilder(curpos)
-                    .addTrajectory(genCrazyTrajectory(curpos, new Pose2d(-40, 10, 0), new Pose2d(-100, -12, 0), new Pose2d(40, 110, 0), new Pose2d(1000,-1200 + (pos == 1 ? -300 : (pos - 1) * 300),0), new Pose2d(1000,pos == 1 ? 1300 : 1400, 0)))
+                    .addTrajectory(genCrazyTrajectory(curpos, new Pose2d(-40, 10, 0), new Pose2d(-100, -12, 0), new Pose2d(40, 110, 0), new Pose2d(1000,-1200 + (pos - 1) * 300,0), new Pose2d(1000,pos == 1 ? 1300 : 1400, 0)))
                     .addTrajectory(genCrazyTrajectory(new Pose2d(-60,  0, 0), new Pose2d(-59, 0, 0), new Pose2d(-2, 0, 0), new Pose2d(-1, 0, 0), new Pose2d(0,0,0), new Pose2d(0,0, 0)))
 
                     .addTrajectory(genCrazyTrajectory(new Pose2d(-59, 14, 0), new Pose2d(-60, 16, 0), new Pose2d(0, 2, 0), new Pose2d(0, -2, 0.1), new Pose2d(-4,0,0), new Pose2d(0,0, 0)))
@@ -226,14 +226,14 @@ public class BlueBackdropPlus extends LinearOpMode {
                     .addTemporalMarker(6.8, ()->{
                         b.spintake(1);
                     })
-                    .addTemporalMarker(7.5, ()->{
+                    .addTemporalMarker(8, ()->{
                         b.spintake(0);
                     })
-                    .addTemporalMarker(8, ()->{
+                    .addTemporalMarker(8.5, ()->{
                         b.spintake(-1);
                     })
 
-                    .addTemporalMarker(8.5, ()->{
+                    .addTemporalMarker(9, ()->{
                         b.spintake(0);
                     })
                     //.addSpatialMarker(new Vector2d(40, 20), ()->{

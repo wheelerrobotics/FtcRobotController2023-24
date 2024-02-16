@@ -28,6 +28,7 @@ public class RedStacks636 extends LinearOpMode {
     int curMoveID = 0;
     boolean firstTimeSlides = true;
 
+    boolean pixel = true;
     double prop = 3;
     boolean done = true;
 
@@ -100,6 +101,15 @@ public class RedStacks636 extends LinearOpMode {
                 relocalizeR(b, ad, new Pose2d(36, -44, 0), 4);
                 done = true;
             }
+            if (curMoveID == 2 && done) {
+                ad.setYellow(true);
+                ad.setWeBeProppin(true);
+                cooldown.reset();
+                while (cooldown.milliseconds() < 2000) {
+                    ad.tick();
+                    pixel = ad.getProp() == 1;
+                }
+            }
             if (curMoveID == 3 && done) {
                 done = false;
                 b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(new Pose2d(36, -44, 0))
@@ -107,9 +117,9 @@ public class RedStacks636 extends LinearOpMode {
                         .lineToLinearHeading(new Pose2d(52, prop == 1 ? -42 : (prop == 2 ? -35 :  -28), 0))
                         .waitSeconds(0.8)
                         .addTemporalMarker(0, () -> {
-                            b.setSlideTarget(800);
+                            b.setSlideTarget(pixel ? 1000 : 600);
                         })
-                        .addTemporalMarker(0.4, () -> {
+                        .addTemporalMarker(0.1, () -> {
                             b.setClawOpen(false);
                         })
                         .addTemporalMarker(0.6, () -> {

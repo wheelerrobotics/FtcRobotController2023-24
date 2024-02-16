@@ -18,12 +18,14 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.helpers.PropAprilDet;
 import org.firstinspires.ftc.teamcode.robot.boats.Bert;
+
 //GOOD THERETICALL (1&2)
 @Autonomous
 public class RedStacks extends LinearOpMode {
     public int localizationCount = 0;
     ElapsedTime cooldown;
     int curMoveID = 0;
+    boolean pixel = true;
     boolean firstTimeSlides = true;
 
     double prop = 3;
@@ -67,15 +69,15 @@ public class RedStacks extends LinearOpMode {
                 }else if(prop == 2) {
                     b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(b.rr.getPoseEstimate())
 
-                            .addTrajectory(genCrazyTrajectoryConstrained(new Pose2d(-36, -64, PI / 2), new Pose2d(12-48, -38, PI / 2), new Pose2d(0, -2, 0), new Pose2d(0, -2, 0), new Pose2d(1, 1, 0), new Pose2d(1, 1, 0), 30, 20))
+                            .addTrajectory(genCrazyTrajectoryConstrained(new Pose2d(-36, -64, PI / 2), new Pose2d(12-48, -41, PI / 2), new Pose2d(0, -2, 0), new Pose2d(0, -2, 0), new Pose2d(1, 1, 0), new Pose2d(1, 1, 0), 30, 20))
 
-                            .addTrajectory(genCrazyTrajectoryConstrained(new Pose2d(-36, -32, PI / 2), new Pose2d(36, -48, 0), new Pose2d(0, -150, -0.05), new Pose2d(12, -190, 0.02), new Pose2d(-2300, 2800, 0), new Pose2d(1200, -1500, 0), 30, 20))
+                            .addTrajectory(genCrazyTrajectoryConstrained(new Pose2d(-36, -32, PI / 2), new Pose2d(36, -48, 0), new Pose2d(0, -150, -0.05), new Pose2d(12, -190, 0.02), new Pose2d(-2300, 2800, 0), new Pose2d(1200, -1200, 0), 30, 20))
 
                             .addTrajectory(incrementer(b, increment))
                             .build());
                 }else {
                     b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(b.rr.getPoseEstimate())
-                            .addTrajectory(genCrazyTrajectoryConstrained(new Pose2d(-36, -64, PI / 2), new Pose2d(-40, -32, -7*PI / 6), new Pose2d(-1, 2, -0.01), new Pose2d(-8, 5, .06), new Pose2d(-1, 1, 0), new Pose2d(-1, 1, 0), 30, 20))
+                            .addTrajectory(genCrazyTrajectoryConstrained(new Pose2d(-36, -64, PI / 2), new Pose2d(-40, -40, -7*PI / 6), new Pose2d(-1, 2, -0.01), new Pose2d(-8, 5, .06), new Pose2d(-1, 1, 0), new Pose2d(-1, 1, 0), 30, 20))
 
                             .addTrajectory(genCrazyTrajectoryConstrained(new Pose2d(-39, -36,  -7*PI / 6), new Pose2d(36, -44, 0), new Pose2d(130, -100, -0.05), new Pose2d(0, -24, 0.06), new Pose2d(-2350, 2500, 0), new Pose2d(800, 100, 0.003), 30, 20))
                             .addTrajectory(incrementer(b, increment))
@@ -90,6 +92,15 @@ public class RedStacks extends LinearOpMode {
                 relocalizeR(b, ad, new Pose2d(36, -44, 0), 4);
                 done = true;
             }
+            if (curMoveID == 2 && done) {
+                ad.setYellow(true);
+                ad.setWeBeProppin(true);
+                cooldown.reset();
+                while (cooldown.milliseconds() < 2000) {
+                    ad.tick();
+                    pixel = ad.getProp() == 1;
+                }
+            }
             if (curMoveID == 3 && done) {
                 done = false;
                 b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(new Pose2d(36, -44, 0))
@@ -97,9 +108,9 @@ public class RedStacks extends LinearOpMode {
                         .lineToLinearHeading(new Pose2d(52, prop == 1 ? -42 : (prop == 2 ? -36 :  -28), 0))
                         .waitSeconds(0.8)
                         .addTemporalMarker(0, () -> {
-                            b.setSlideTarget(800);
+                            b.setSlideTarget(pixel ? 1000 : 560);
                         })
-                        .addTemporalMarker(0.4, () -> {
+                        .addTemporalMarker(0.1, () -> {
                             b.setClawOpen(false);
                         })
                         .addTemporalMarker(0.6, () -> {
@@ -140,6 +151,7 @@ public class RedStacks extends LinearOpMode {
                 return;
             }
             b.autoTick();
+            tele.addData("pixel", pixel);
             tele.addData("curmove", curMoveID);
             tele.update();
             if (done) curMoveID++;

@@ -32,11 +32,11 @@ import java.util.List;
 @Config
 public class DualAprilPropPipeline extends OpenCvPipeline {
     public static int propSize = 5000;
-    public static int pixelSize = 3000;
+    public static int pixelSize = 600;
     public boolean notB = false;
     public static int xcutoff = 200;
     public boolean yellow = false;
-    public static int yhMax, yhMin, ysMax, ysMin, ylMax, ylMin;
+    public static int yhMax = 115, yhMin = 95, ysMax = 300, ysMin = 100, ylMax = 400, ylMin = 0;
     public static int hMax, hMin, sMax, sMin, lMax, lMin;
     public int pos = 0;
     public boolean weBeProppin = true;
@@ -63,11 +63,11 @@ public class DualAprilPropPipeline extends OpenCvPipeline {
             sMin = 50;
             lMin = 0;
         } else {
-            hMax = 130;
+            hMax = 125;
             sMax = 255;
             lMax = 255;
 
-            hMin = 100;
+            hMin = 110;
             sMin = 50;// 50 bef
             lMin = 0; // 200 bef
         }
@@ -182,14 +182,14 @@ public class DualAprilPropPipeline extends OpenCvPipeline {
                 List<MatOfPoint> contours = new ArrayList<>();
                 double maxArea = 0;
                 Mat hierarchey = new Mat();
-                Mat ROI = mask.submat(mask.height() / 2, mask.height(), 0, mask.width());
+                Mat ROI = yellow ? mask : mask.submat(mask.height() / 2, mask.height(), 0, mask.width());
 
                 Imgproc.findContours(ROI, contours, hierarchey, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
                 List<Double> areas = new ArrayList<>();
                 int position = 0;
 
                 if (yellow) contours.removeIf(c -> contourArea(c) < pixelSize);
-                contours.removeIf(c -> contourArea(c) < propSize);
+                else contours.removeIf(c -> contourArea(c) < propSize);
 
                 if (contours.size() == 1) {
                     Rect rect3 = boundingRect(contours.get(0));

@@ -61,6 +61,12 @@ public class PropAprilDet {
         dapp.weBeProppin = proppin;
         tick();
     }
+
+    public void setYellow(boolean yellow) {
+        dapp.yellow = yellow;
+        tick();
+    }
+
     public int getProp() {
         return (dapp.weBeProppin) ? dapp.pos : 0;
     }

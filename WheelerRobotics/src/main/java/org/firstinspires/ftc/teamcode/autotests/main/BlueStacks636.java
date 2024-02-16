@@ -2,10 +2,10 @@ package org.firstinspires.ftc.teamcode.autotests.main;
 
 import static org.firstinspires.ftc.teamcode.autotests.Auto.getPropPos;
 import static org.firstinspires.ftc.teamcode.autotests.Auto.incrementer;
-import static org.firstinspires.ftc.teamcode.autotests.Auto.placerBlueLow;
 import static org.firstinspires.ftc.teamcode.autotests.Auto.relocalizeB;
 import static org.firstinspires.ftc.teamcode.helpers.CrazyTrajectoryGenerator.genCrazyTrajectory;
 import static org.firstinspires.ftc.teamcode.helpers.CrazyTrajectoryGenerator.genCrazyTrajectoryConstrained;
+import static org.firstinspires.ftc.teamcode.robot.boats.Bert.tiltPlacePos;
 import static java.lang.Math.PI;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -27,6 +27,7 @@ public class BlueStacks636 extends LinearOpMode {
     ElapsedTime cooldown;
     int curMoveID = 0;
     boolean firstTimeSlides = true;
+    boolean pixel = true;
 
     double prop = 3;
     boolean done = true;
@@ -98,9 +99,39 @@ public class BlueStacks636 extends LinearOpMode {
                 relocalizeB(b, ad, new Pose2d(36, 44, 0), 4);
                 done = true;
             }
+            if (curMoveID == 2 && done) {
+                ad.setYellow(true);
+                ad.setWeBeProppin(true);
+                cooldown.reset();
+                while (cooldown.milliseconds() < 2000) {
+                    ad.tick();
+                    pixel = ad.getProp() == 1;
+                }
+            }
             if (curMoveID == 3 && done) {
                 done = false;
-                b.rr.followTrajectorySequenceAsync(placerBlueLow(b, prop, increment));
+                b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(new Pose2d(36, 44, 0))
+                        .waitSeconds(0.3)
+                        .lineToLinearHeading(new Pose2d(52, prop == 1 ? 42 : (prop == 2 ? 36 :  28), 0))
+                        .waitSeconds(0.8)
+                        .addTemporalMarker(0, () -> {
+                            b.setSlideTarget(pixel ? 1000 : 600);
+                        })
+                        .addTemporalMarker(0.1, () -> {
+                            b.setClawOpen(false);
+                        })
+                        .addTemporalMarker(0.6, () -> {
+                            b.setTilt(tiltPlacePos + 0.06);
+                            b.setArmPickup(false);
+                        })
+                        .addTemporalMarker(1.8, () -> {
+                            b.setClawOpen(true);
+                        })
+                        .addTemporalMarker(1.9, () -> {
+                            b.setSlideTarget(1000);
+                        })
+                        .addTemporalMarker(2.2, increment)
+                        .build());
                 // INCREMENT ONCE PATH IS RUN
             }
             if (curMoveID == 4 && done) {
