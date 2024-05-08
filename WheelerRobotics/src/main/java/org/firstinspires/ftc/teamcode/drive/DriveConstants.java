@@ -92,10 +92,10 @@ public class DriveConstants {
 
      */
     // just messed with these feb 1, idk if they will mess stuff up, but try retuning fosho
-    public static double MAX_VEL = 70; // 70;//47.91064797707293; //72.38830997134116; turned down for some wiggle room
-    public static double MAX_ACCEL = 30; //50;//57.91064797707293;
+    public static double MAX_VEL = 50; // 70;//47.91064797707293; //72.38830997134116; turned down for some wiggle room
+    public static double MAX_ACCEL = 36; //50;//57.91064797707293;
     public static double MAX_ANG_VEL = Math.toRadians(180); // sugg max: 215.7045259853722//real max: 269.6306574817152
-    public static double MAX_ANG_ACCEL = Math.toRadians(180); //real max:
+    public static double MAX_ANG_ACCEL = Math.toRadians(50); //real max:
 
 
 

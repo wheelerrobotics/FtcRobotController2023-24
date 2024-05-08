@@ -83,7 +83,8 @@ public class DualAprilPropPipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
-        if (!notB) Core.flip(input, input, -1);
+        if (!notB) Core.flip(input, input, -1); //only for flipped cams
+        //Core.flip(input, input, -1);
         //Drawing the Contours
         try {
 

@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
-import static org.firstinspires.ftc.teamcode.robot.boats.Bert.leftShuvDown;
+import static org.firstinspires.ftc.teamcode.robot.boats.Bert.armPickupPos;
+import static org.firstinspires.ftc.teamcode.robot.boats.Bert.leftShuv1;
+import static org.firstinspires.ftc.teamcode.robot.boats.Bert.leftShuv2;
+import static org.firstinspires.ftc.teamcode.robot.boats.Bert.leftShuv3;
+import static org.firstinspires.ftc.teamcode.robot.boats.Bert.leftShuv4;
+import static org.firstinspires.ftc.teamcode.robot.boats.Bert.leftShuv5;
 import static org.firstinspires.ftc.teamcode.robot.boats.Bert.leftShuvUp;
-import static org.firstinspires.ftc.teamcode.robot.boats.Bert.rightShuvDown;
-import static org.firstinspires.ftc.teamcode.robot.boats.Bert.rightShuvUp;
 import static org.firstinspires.ftc.teamcode.robot.boats.Bert.slidePickupPos;
 import static org.firstinspires.ftc.teamcode.robot.boats.Bert.slidePlacePos;
 import static org.firstinspires.ftc.teamcode.robot.boats.Bert.tiltPickupPos;
@@ -36,6 +39,8 @@ public class BerTele extends LinearOpMode {
     public static double SPEEDDOWN = 0.5;
     public boolean holdingPosition = false;
     public double lastSlidePos = 0;
+    int pickupPos = 0;
+    public boolean incrementedPickupPos = false;
 
     /*
 
@@ -79,11 +84,14 @@ public class BerTele extends LinearOpMode {
     public boolean yWasPressed = false;
     public boolean aWasPressed = false;
     public boolean bWasPressed = false;
+    public boolean lWasPressed = false;
+    public boolean rWasPressed = false;
     public boolean g2wasZero = false;
     public ElapsedTime aMacro = new ElapsedTime();
     public ElapsedTime planeCooldown = new ElapsedTime();
     public boolean planeLaunched = false;
     public boolean aMacroing = false;
+    public boolean lMacroing = false;
     public boolean bMacroing = false;
     public Bert b;
     public int kcount = 0;
@@ -91,14 +99,13 @@ public class BerTele extends LinearOpMode {
     public double permaDirectionMultiplier = -1;
     public double tempDirectionMultiplier = 1;
 
+
     @Override
     public void runOpMode() throws InterruptedException {
         b = new Bert();
         b.init(hardwareMap);
         b.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //b.teleinit(hardwareMap);
-        b.setDownCorrection(true);
-        b.setDownCorrectionFactor(0.45);
         //PropAprilDet ad = new PropAprilDet();
         //ad.init(hardwareMap, "Front");
 
@@ -108,6 +115,7 @@ public class BerTele extends LinearOpMode {
             b.setClawOpen(true);
             b.setArmPickup(true);
             b.setTilt(tiltPickupPos);
+            b.setDownCorrection(true);
         }
         while (opModeIsActive()) {
             try {
@@ -188,20 +196,24 @@ public class BerTele extends LinearOpMode {
                     }
                     if (aMacro.milliseconds() > 500 && // stops resetting when we get into position
                             abs(b.getSlidePos() - slidePlacePos) < 30) { // theoretically vacuously true
-                        b.setClawOpen(true);
                         aMacroing = false;
                     }
                 }
 
                 if (bMacroing) {
                     if (abs(b.getSlidePos() - slidePickupPos) > 30) {
+                        b.setArm(armPickupPos);
+                        b.setTilt(tiltPickupPos);
                         // do something? it should automatically do what it needs to because of the failsafe.
                        // if (abs(b.getSlidePos() - lastSlidePos) <= 2) {
                        //     b.resetSlides();
                        //     bMacroing = false;
                        // }
                         //lastSlidePos = b.getSlidePos();
-                    } else {
+                    }else if(abs(b.getSlidePos() - slidePickupPos) < 300){
+                        b.setClawOpen(true);
+
+                    }else {
                         bMacroing = false;
                         b.setSlideTargeting(false);
                     }
@@ -258,25 +270,54 @@ public class BerTele extends LinearOpMode {
                 if (gamepad2.left_stick_y == 0 && gamepad1.a) { // if player 2 not controlling intake, let player 1
                     b.spintake(-1);
                 }
-                if (gamepad2.left_stick_y == 0 && gamepad1.b) { // if player 2 not controlling intake, let player 1
-                    b.spintake(-0.6);
-                }
                 if (gamepad2.left_stick_y == 0 && gamepad1.x) { // if player 2 not controlling intake, let player 1
                     b.spintake(0.6);
                 }
                 if (gamepad2.left_stick_y == 0 && gamepad1.y) { // if player 2 not controlling intake, let player 1
                     b.spintake(1);
                 }
-                if (gamepad1.right_trigger > 0) {
-                    b.setLeftShuv(leftShuvDown);
-                    b.setRightShuv(rightShuvDown);
+
+
+                if (gamepad1.left_stick_button || gamepad1.dpad_left) {
+                    int[] a = b.csb.pixelBlink();
                 }
-                else {
-                    b.setLeftShuv(leftShuvUp);
-                    b.setRightShuv(rightShuvUp);
+                b.csb.tick();
+
+                if (lMacroing) {
+                    if (abs(b.getSlidePos() - slidePickupPos) > 30) {
+                        b.setArm(armPickupPos);
+                        b.setTilt(tiltPickupPos);
+                        // do something? it should automatically do what it needs to because of the failsafe.
+                        // if (abs(b.getSlidePos() - lastSlidePos) <= 2) {
+                        //     b.resetSlides();
+                        //     bMacroing = false;
+                        // }
+                        //lastSlidePos = b.getSlidePos();
+                    } else {
+                        b.setClawOpen(true);
+                        lMacroing = false;
+                        b.setSlideTargeting(false);
+                    }
+                }
+                b.setRunToBottom(gamepad2.right_stick_button);
+                if (gamepad1.left_trigger == 0) {
+                    if (gamepad1.right_trigger > 0.99 && !incrementedPickupPos) {
+                        incrementedPickupPos = true;
+                        pickupPos += 1;
+                    } else if (gamepad1.right_trigger <= 0.01) {
+                        pickupPos = 0;
+                    } else if (gamepad1.right_trigger < 0.99 && incrementedPickupPos) {
+                        incrementedPickupPos = false;
+                    }
+                    b.setLeftShuv(pickupPos == 0 ? leftShuvUp : (pickupPos == 1 ? leftShuv5 : (pickupPos == 2 ? leftShuv4 : (pickupPos == 3 ? leftShuv3 : (pickupPos == 4 ? leftShuv2 : leftShuv1)))));
+
+                }else {
+                    b.setLeftShuv(leftShuv1);
                 }
 
+
                 b.tick();
+                //b.csbTick();
                 tele.addData("AMAC", aMacroing);
                 tele.addData("HPMAC", holdingPosition);
                 tele.addData("BMAC", bMacroing);
@@ -295,6 +336,7 @@ public class BerTele extends LinearOpMode {
         aMacroing = false;
         bMacroing = false;
         yMacroing = false;
+        lMacroing = false;
     }
 
 }

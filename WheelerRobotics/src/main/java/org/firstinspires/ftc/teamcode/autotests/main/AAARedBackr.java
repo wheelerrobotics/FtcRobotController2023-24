@@ -1,13 +1,7 @@
 package org.firstinspires.ftc.teamcode.autotests.main;
 
-import static org.firstinspires.ftc.teamcode.autotests.Auto.incrementer;
-import static org.firstinspires.ftc.teamcode.helpers.CrazyTrajectoryGenerator.genCrazyTrajectory;
-import static org.firstinspires.ftc.teamcode.helpers.CrazyTrajectoryGenerator.genCrazyTrajectoryConstrained;
-import static org.firstinspires.ftc.teamcode.robot.boats.Bert.leftShuvUp;
-import static org.firstinspires.ftc.teamcode.robot.boats.Bert.tiltPlacePos;
-import static java.lang.Math.PI;
-
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.MarkerCallback;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -21,32 +15,45 @@ import org.firstinspires.ftc.teamcode.robot.boats.Bert;
 
 //GOOD THEORETCALLY
 @Autonomous
-public class RedBackdrop extends LinearOpMode {
+@Config
+public class AAARedBackr extends LinearOpMode {
     public int localizationCount = 0;
     ElapsedTime cooldown;
     int curMoveID = 0;
+
+    public static double bx = 5.8;
+    public static double by= 3.9;
+
+    public static double mx = 1;
+    public static double my= 1;
     boolean firstTimeSlides = true;
+    boolean localizing = false;
     double prop = 0;
     Bert b = null;
     PropAprilDet ad = null;
     Telemetry tele = null;
     boolean done = true;
+    ElapsedTime clawTimer = null;
+    boolean clawTiming = false;
+    boolean relocalized = false;
     @Override
     public void runOpMode() throws InterruptedException {
         double c = 0;
         double botWidth = 16;
-        DriveConstants.MAX_VEL = 30;
-        DriveConstants.MAX_ACCEL = 20;
+        DriveConstants.MAX_VEL = 50;
+        DriveConstants.MAX_ACCEL = 35;
         b = new Bert();
         b.setCawtFailsafe(false);
         b.init(hardwareMap);
         ad = new PropAprilDet();
-        ad.init(hardwareMap, "Back", true);
+        ad.init(hardwareMap, "Front", false);
         cooldown = new ElapsedTime();
+        clawTimer = new ElapsedTime();
         tele = FtcDashboard.getInstance().getTelemetry();
+        b.rr.setPoseEstimate(new Pose2d(-36, -65, Math.toRadians(90.00)));
         while (opModeInInit()) {
 
-            b.rr.setPoseEstimate(new Pose2d(12, -64, PI/2));
+            b.rr.setPoseEstimate(new Pose2d(-36, -65, Math.toRadians(90.00)));
             if (ad.bv.opened) {
                 ad.setWeBeProppin(true);
                 ad.tick();
@@ -57,6 +64,7 @@ public class RedBackdrop extends LinearOpMode {
             if (curMoveID ==0) {
                 if (done) {
                     done = false;
+
                     ad.setWeBeProppin(true);
                     cooldown.reset();
                     while (cooldown.milliseconds() < 500) {
@@ -64,40 +72,13 @@ public class RedBackdrop extends LinearOpMode {
                         prop = ad.getProp();
                     }
                     prop = (prop == 1 ? 1 : (prop == 2) ? 3 : 2);
-                    if (prop != 0) { // add a timeout or make getprop rly robust
-                        if (prop == 1) {
-                            b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(b.rr.getPoseEstimate())
-                                    .addTrajectory(genCrazyTrajectoryConstrained(new Pose2d(12, -64, PI/2), new Pose2d(14,-39, PI/6), new Pose2d(1, 2, 0.0), new Pose2d(8,5, 0), new Pose2d(1,1,0), new Pose2d(1,1, 0), 30, 20))
-                                    .addTrajectory(genCrazyTrajectory(new Pose2d(15, -36, PI / 6), new Pose2d(36, -44, 0), new Pose2d(-13, -12, 0.06), new Pose2d(0, 1, 0.06), new Pose2d(0, -1000, 0), new Pose2d(57, 0, -0.003)))
-                                    .addTrajectory(incrementer(b, increment))
-
-                                    .build());
-                        } else if (prop == 2) {
-                            b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(b.rr.getPoseEstimate())
-
-                                    .addTrajectory(genCrazyTrajectoryConstrained(new Pose2d(12, -64, PI / 2), new Pose2d(12, -38, PI / 2), new Pose2d(0, 2, 0), new Pose2d(0, 2, 0), new Pose2d(1, -1, 0), new Pose2d(1, -1, 0), 30, 20))
-                                    .addTrajectory(genCrazyTrajectory(new Pose2d(12, -35, PI / 2), new Pose2d(36, -44, 0), new Pose2d(0, -13, 0), new Pose2d(12, 12, 0), new Pose2d(0, -200, 0), new Pose2d(57, 0, 0)))
-                                    .addTrajectory(incrementer(b, increment))
-
-                                    .build());
-                        } else {
-                            b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(b.rr.getPoseEstimate())
-                                    .addTrajectory(genCrazyTrajectoryConstrained(new Pose2d(12, -64, PI/2), new Pose2d(8,-39, 5*PI/6), new Pose2d(-1, 2, 0), new Pose2d(-8,-5, 0), new Pose2d(1,1,0), new Pose2d(1,1, 0), 30, 20))
-                                    .addTrajectory(genCrazyTrajectory(new Pose2d(8, -36, -7 * PI / 6), new Pose2d(36, -44, 0), new Pose2d(13, -12, -0.1), new Pose2d(0, 1, -0.06), new Pose2d(0, -1000, 0), new Pose2d(57, 0, -0.003)))
-                                    .addTrajectory(incrementer(b, increment))
-
-                                    .build());
-                        }
-
-                    }
-                }
-
-            }
-
-            if (curMoveID == 1) {
+                }}
+            localizing = true;
+            /*if (curMoveID == 1) {
                 relocalize(new Pose2d(36, -44, 0), 2);
                 done = true;
             }
+
             if (curMoveID == 2) {
                 if (done){
                     done = false;
@@ -130,7 +111,7 @@ public class RedBackdrop extends LinearOpMode {
                     done = false;
                     Pose2d curpos = new Pose2d(57, -36, 0);//prop == 1 ? new Pose2d(54, 44, 0) : (prop == 2 ? new Pose2d(54, 36, 0) : new Pose2d(54, 28, 0));
                     b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(curpos)
-                                    .back(5)
+                            .back(5)
                             .strafeRight(40)
                             .forward(10)
                             .waitSeconds(2)
@@ -152,12 +133,38 @@ public class RedBackdrop extends LinearOpMode {
             }
             if (curMoveID == 4) {
                 return;
-            }
+            }*/
             b.autoTick();
+            if (localizing) {
+                // still gotta figure out what tags to use
+                tele.addData("localizing", true);
+                ad.setWeBeProppin(false);
+                ad.getDetected();
+                if (ad.pos != null) {
+                    tele.addData("apx", mx * ad.pos.getX() - bx);
+                    tele.addData("apy", my * ad.pos.getY() - by);
+                    //if (abs((ad.pos.getX() - 3.875) - b.rr.getPoseEstimate().getX()) < 5 && abs((ad.pos.getY() - 4) - b.rr.getPoseEstimate().getY()) < 5) {
+
+
+                      //  b.rr.setPoseEstimate(new Pose2d(ad.pos.getX() - 3.875, ad.pos.getY() - 4, ad.pos.getHeading()));
+                       // relocalized = true;
+                    //}
+                }
+            }else {
+
+                tele.addData("localizing", false);
+            }
+            if (clawTiming && clawTimer.milliseconds() > 100) {
+                b.setClawOpen(!b.getClawOpen());
+                clawTiming = false;
+            }
             tele.addData("curmove", curMoveID);
+            tele.addData("relocalized", relocalized);
+
             tele.addData("busy", b.rr.isBusy());
             tele.update();
             //if (!b.rr.isBusy()) done = true;
+
             if (done) {
                 //done = false;
                 curMoveID++;

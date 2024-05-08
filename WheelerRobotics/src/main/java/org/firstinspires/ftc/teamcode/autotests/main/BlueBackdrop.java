@@ -98,6 +98,7 @@ public class BlueBackdrop extends LinearOpMode {
             if (curMoveID == 2) {
                 if (done){
                     done = false;
+
                     b.rr.followTrajectorySequenceAsync(b.rr.trajectorySequenceBuilder(new Pose2d(36, 44, 0))
                             .waitSeconds(0.4)
                             .lineToLinearHeading(new Pose2d(57, prop == 1 ? 46 : (prop == 2 ? 34 :  29), 0))

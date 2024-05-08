@@ -8,7 +8,6 @@ import android.content.Context;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.ftccommon.SoundPlayer;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -18,6 +17,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.chassis.Meccanum.Meccanum;
+import org.firstinspires.ftc.teamcode.demos.ColorSensorBlinkin;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.helpers.PID;
 import org.firstinspires.ftc.teamcode.robot.Robot;
@@ -37,17 +37,29 @@ public class Bert  extends Meccanum implements Robot {
     public static double rightServoOffset = 0.1;
     public static double rightShuvDown = 0.93;
     public static double rightShuvUp = 0;
-    public static double leftShuvDown = 0.04;
-    public static double leftShuvUp = 1;
+    public static double leftShuvDown = 0.941;
+    public static double leftShuv1 = 0.83;
+    public static double leftShuv2 = 0.8;
+    public static double leftShuv3 = 0.74;
+    public static double leftShuv4 = 0.66;
+    public static double leftShuv5 = 0.61;
+    public static double leftShuvUp = 0;
+    public ColorSensorBlinkin csb = null;
+
 
     Telemetry tele = FtcDashboard.getInstance().getTelemetry();
     public void teleinit(HardwareMap hardwareMap) {
         // internal IMU setup (copied and pasted, idk what it really does, but it works)
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        //BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        //parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
 
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
+        //imu = hardwareMap.get(BNO055IMU.class, "imu");
+        //imu.initialize(parameters);
+
+        //csb = new ColorSensorBlinkin("blinkin", "colorSensor", "colorSensor2", hardwareMap);
+    }
+    public void csbTick() {
+        //if (csb != null) csb.tick();
     }
     public void resetImu() {
         this.offset = -imu.getAngularOrientation().firstAngle;
@@ -66,9 +78,8 @@ public class Bert  extends Meccanum implements Robot {
         // imu.initialize(parameters);
         // angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
 
-
+        csb = new ColorSensorBlinkin("blinkin", "colorSensor", "colorSensor2", hardwareMap);
         // Meccanum Motors Definition and setting prefs
-
         motorFrontLeft = (DcMotorEx) hardwareMap.dcMotor.get("motorFrontLeft"); // EH1
         motorBackLeft = (DcMotorEx) hardwareMap.dcMotor.get("motorBackLeft"); // EH4
         motorFrontRight = (DcMotorEx) hardwareMap.dcMotor.get("motorFrontRight"); // CH2
@@ -119,17 +130,18 @@ public class Bert  extends Meccanum implements Robot {
         runtime.reset();
     }
     // This robot shouldnt require a claw/arm/wrist "thread" class beacuse we'll be smart and engineer it so it cant break itself
-    public static double clawSlideThreshold = 800;
+    public static double clawSlideThreshold = 300;
     public static double clawOpenPos = 0.8;
-    public static double clawClosedPos = 0.34;
-    public static double planeLauncedPos = 0.8;
+    public static double clawClosedPos = 0.25;
+    public static double planeLauncedPos = 1;
     public static double planeReadyPos = 0;
-    public static double tiltSlideThreshold = 800;
-    public static double tiltPlacePos = 0.23;
-    public static double tiltPickupPos = 0.29;
-    public static double armPickupPos = 0.86;
-    public static double armSlideThreshold = 800;
-    public static double armPlacePos = 0.3;
+    public static double tiltSlideThreshold = 300;
+    public static double tiltPlacePos = 0.24;
+    public static double etiltPlacePos = 0.31;
+    public static double tiltPickupPos = 0.27;
+    public static double armPickupPos = 0.82;
+    public static double armSlideThreshold = 300;
+    public static double armPlacePos = 0.24;
     public static double slidePlacePos = 1600;
     public static double slidePickupPos = 0;
 
@@ -157,6 +169,9 @@ public class Bert  extends Meccanum implements Robot {
     }
     public void setPlaneLaunched(boolean launched) {
         plane.setPosition(launched ? planeLauncedPos : planeReadyPos); // NEED TO TEST VALS
+    }
+    public int[] getPixelStates() {
+        return csb.getPixelStates();
     }
     public void setRightShuv(double position) {
         rightShuv.setPosition(position);
@@ -231,6 +246,7 @@ public class Bert  extends Meccanum implements Robot {
         motorFrontLeft.setZeroPowerBehavior(zeroPowerBehavior);
     }
     public void tick() {
+        //csb.tick();
         st.tick();
         checkCatPos();
         //cawt.tick();
@@ -252,6 +268,7 @@ public class Bert  extends Meccanum implements Robot {
     }
     public void autoTick() {
         st.tick();
+        csb.tick();
         if (cawtFailsafe) checkCatPos();
         rr.update();
     }
@@ -418,6 +435,10 @@ public class Bert  extends Meccanum implements Robot {
     public void resetSlides() {
         st.resetSlideBasePos();
     }
+    public boolean runToBottom = false;
+    public void setRunToBottom(boolean yes) {
+        runToBottom = yes;
+    }
 
     private class SlideThread {
         public boolean downCorrection = false;
@@ -460,9 +481,9 @@ public class Bert  extends Meccanum implements Robot {
             tele.addData("slidetar", slideTar);
             tele.addData("slidep", sp);
 
-            if (pos < minHeight  && power < 0) {
+            if (pos < minHeight-100  && power < 0) {
                 SLIDE_TARGETING = true;
-                slideTar = minHeight;
+                slideTar = minHeight-100;
             }
             if (pos > maxHeight && power > 0) {
                 SLIDE_TARGETING = true;
@@ -473,10 +494,11 @@ public class Bert  extends Meccanum implements Robot {
                 tele.addData("pidpower", power);
             }
 
-            tele.addData("drivingPower", minMaxScaler(pos, power));
+            tele.addData("drivingPower", !runToBottom ? minMaxScaler(pos, power) : 0.4);
             tele.update();
 
-            slides.setPower(minMaxScaler(pos, power));
+            if (!runToBottom) slides.setPower(minMaxScaler(pos, power));
+            else slides.setPower(0.4);
         }
 
         public double minMaxScaler(double x, double power) {
@@ -484,7 +506,7 @@ public class Bert  extends Meccanum implements Robot {
             if (p > -0.05 && p < 0.25 && pos < 400 && downCorrection) { // let it go farther down
                 p = st.pos > 0 ? correctionFactor : 0.15;
             }
-            return p * (SLIDE_TARGETING ? 0.5 : 1);
+            return p * 1;
         }
 
         public void driveSlides(double p) {
