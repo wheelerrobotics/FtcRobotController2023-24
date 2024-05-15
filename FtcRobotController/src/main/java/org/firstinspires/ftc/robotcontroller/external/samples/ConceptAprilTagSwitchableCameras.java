@@ -32,7 +32,6 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -43,8 +42,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
-/**
- * This 2023-2024 OpMode illustrates the basics of AprilTag recognition and pose estimation, using
+/*
+ * This OpMode illustrates the basics of AprilTag recognition and pose estimation, using
  * two webcams.
  *
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
@@ -54,7 +53,7 @@ import java.util.List;
 @Disabled
 public class ConceptAprilTagSwitchableCameras extends LinearOpMode {
 
-    /**
+    /*
      * Variables used for switching cameras.
      */
     private WebcamName webcam1, webcam2;
@@ -62,12 +61,12 @@ public class ConceptAprilTagSwitchableCameras extends LinearOpMode {
     private boolean oldRightBumper;
 
     /**
-     * {@link #aprilTag} is the variable to store our instance of the AprilTag processor.
+     * The variable to store our instance of the AprilTag processor.
      */
     private AprilTagProcessor aprilTag;
 
     /**
-     * {@link #visionPortal} is the variable to store our instance of the vision portal.
+     * The variable to store our instance of the vision portal.
      */
     private VisionPortal visionPortal;
 
@@ -81,7 +80,6 @@ public class ConceptAprilTagSwitchableCameras extends LinearOpMode {
         telemetry.addData(">", "Touch Play to start OpMode");
         telemetry.update();
         waitForStart();
-
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
@@ -109,7 +107,7 @@ public class ConceptAprilTagSwitchableCameras extends LinearOpMode {
         // Save more CPU resources when camera is no longer needed.
         visionPortal.close();
 
-    }   // end runOpMode()
+    } // end runOpMode()
 
     /**
      * Initialize the AprilTag processor.
@@ -122,18 +120,18 @@ public class ConceptAprilTagSwitchableCameras extends LinearOpMode {
         webcam1 = hardwareMap.get(WebcamName.class, "Webcam 1");
         webcam2 = hardwareMap.get(WebcamName.class, "Webcam 2");
         CameraName switchableCamera = ClassFactory.getInstance()
-            .getCameraManager().nameForSwitchableCamera(webcam1, webcam2);
+                .getCameraManager().nameForSwitchableCamera(webcam1, webcam2);
 
         // Create the vision portal by using a builder.
         visionPortal = new VisionPortal.Builder()
-            .setCamera(switchableCamera)
-            .addProcessor(aprilTag)
-            .build();
+                .setCamera(switchableCamera)
+                .addProcessor(aprilTag)
+                .build();
 
-    }   // end method initAprilTag()
+    } // end method initAprilTag()
 
     /**
-     * Function to add telemetry about camera switching.
+     * Add telemetry about camera switching.
      */
     private void telemetryCameraSwitching() {
 
@@ -145,10 +143,10 @@ public class ConceptAprilTagSwitchableCameras extends LinearOpMode {
             telemetry.addData("Press LeftBumper", "to switch to Webcam 1");
         }
 
-    }   // end method telemetryCameraSwitching()
+    } // end method telemetryCameraSwitching()
 
     /**
-     * Function to add telemetry about AprilTag detections.
+     * Add telemetry about AprilTag detections.
      */
     private void telemetryAprilTag() {
 
@@ -159,24 +157,28 @@ public class ConceptAprilTagSwitchableCameras extends LinearOpMode {
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata != null) {
                 telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
-                telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
-                telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
-                telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
+                telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x,
+                        detection.ftcPose.y, detection.ftcPose.z));
+                telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch,
+                        detection.ftcPose.roll, detection.ftcPose.yaw));
+                telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range,
+                        detection.ftcPose.bearing, detection.ftcPose.elevation));
             } else {
                 telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
-                telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
+                telemetry.addLine(
+                        String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
             }
-        }   // end for() loop
+        } // end for() loop
 
         // Add "key" information to telemetry
         telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
         telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
         telemetry.addLine("RBE = Range, Bearing & Elevation");
 
-    }   // end method telemetryAprilTag()
+    } // end method telemetryAprilTag()
 
     /**
-     * Function to set the active camera according to input from the gamepad.
+     * Set the active camera according to input from the gamepad.
      */
     private void doCameraSwitching() {
         if (visionPortal.getCameraState() == CameraState.STREAMING) {
@@ -193,6 +195,6 @@ public class ConceptAprilTagSwitchableCameras extends LinearOpMode {
             oldRightBumper = newRightBumper;
         }
 
-    }   // end method doCameraSwitching()
+    } // end method doCameraSwitching()
 
-}   // end class
+} // end class

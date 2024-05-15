@@ -5,7 +5,6 @@ import static java.lang.Math.abs;
 import static java.lang.Math.pow;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -20,6 +19,7 @@ import org.firstinspires.ftc.teamcode.chassis.Chassis;
 // robot driving and motion class
 
 public class Meccanum implements Chassis {
+    public double offset = 0;
 
     protected double[] left = {
             1,  -1,
@@ -52,13 +52,13 @@ public class Meccanum implements Chassis {
         // should be called before using class ALWAYS
 
         // internal IMU setup (copied and pasted, idk what it really does, but it works)
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        //BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        //parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        //parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        //parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        //parameters.loggingEnabled      = true;
+        //parameters.loggingTag          = "IMU";
+        //parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
        // imu = hardwareMap.get(BNO055IMU.class, "imu");
        // imu.initialize(parameters);
@@ -171,7 +171,7 @@ public class Meccanum implements Chassis {
     }
     public void fieldCentricDrive(double x, double y, double rx){
         // Read inverse IMU heading, as the IMU heading is CW positive
-        double botHeading = -imu.getAngularOrientation().firstAngle;
+        double botHeading = -imu.getAngularOrientation().firstAngle - offset;
 
         double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
         double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);

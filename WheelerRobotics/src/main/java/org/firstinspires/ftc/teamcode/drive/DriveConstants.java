@@ -38,7 +38,7 @@ public class DriveConstants {
      */
     public static final boolean RUN_USING_ENCODER = false;
     public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0,
-            22.620354292448855);
+            17.81155759934999);
 
     /*
      * These are physical constants that can be determined from your robot (including the track
@@ -50,7 +50,7 @@ public class DriveConstants {
      */
     public static double WHEEL_RADIUS = 1.8898; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 9.55; // in
+    public static double TRACK_WIDTH = 14.66; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -59,9 +59,9 @@ public class DriveConstants {
      * empirically tuned. kv = 0.00934, ks = 0.07036, ka = 0.00002
      * empirically tuned. kv = 0.00925, ks = 0.07124, ka = 0.00002
      *///kv = 0.00940, ks = 0.08259, ka = 0.00002
-    public static double kV = 0.01916; // 1.0 / rpmToVelocity(MAX_RPM);
-    public static double kA = 0.0015;
-    public static double kStatic = 0.05694;
+    public static double kV = 0.02; // 1.0 / rpmToVelocity(MAX_RPM);
+    public static double kA = 0.002;
+    public static double kStatic = -0.02;
 
     /*
      * These values are used to generate the trajectories for you robot. To ensure proper operation,
@@ -91,10 +91,11 @@ public class DriveConstants {
      * You are free to raise this on your own if you would like. It is best determined through experimentation.
 
      */
-    public static double MAX_VEL = 47.15142672177759; //59.371; turned down for some wiggle room
-    public static double MAX_ACCEL = 52.48291908330528;
-    public static double MAX_ANG_VEL = Math.toRadians(340.6386);
-    public static double MAX_ANG_ACCEL = Math.toRadians(273.36816);
+    // just messed with these feb 1, idk if they will mess stuff up, but try retuning fosho
+    public static double MAX_VEL = 50; // 70;//47.91064797707293; //72.38830997134116; turned down for some wiggle room
+    public static double MAX_ACCEL = 36; //50;//57.91064797707293;
+    public static double MAX_ANG_VEL = Math.toRadians(180); // sugg max: 215.7045259853722//real max: 269.6306574817152
+    public static double MAX_ANG_ACCEL = Math.toRadians(50); //real max:
 
 
 
@@ -102,9 +103,9 @@ public class DriveConstants {
      * Adjust the orientations here to match your robot. See the FTC SDK documentation for details.
      */
     public static RevHubOrientationOnRobot.LogoFacingDirection LOGO_FACING_DIR =
-            RevHubOrientationOnRobot.LogoFacingDirection.UP;
+            RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
     public static RevHubOrientationOnRobot.UsbFacingDirection USB_FACING_DIR =
-            RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+            RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
 
 

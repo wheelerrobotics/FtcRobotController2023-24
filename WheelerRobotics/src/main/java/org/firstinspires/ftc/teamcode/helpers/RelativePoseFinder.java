@@ -1,16 +1,13 @@
 package org.firstinspires.ftc.teamcode.helpers;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.openftc.apriltag.AprilTagDetection;
 
 public class RelativePoseFinder {
     public static AngleUnit outputUnitsAngle = AngleUnit.RADIANS;
     public static AprilTagPoseFtc findPose(AprilTagDetection detection) {
-        AprilTagPoseFtc ftcPose = new AprilTagPoseFtc();
+       /* AprilTagPoseFtc ftcPose = new AprilTagPoseFtc();
         ftcPose.x =  detection.pose.x;
         ftcPose.y =  detection.pose.z;
         ftcPose.z = -detection.pose.y;
@@ -24,6 +21,7 @@ public class RelativePoseFinder {
         ftcPose.bearing = outputUnitsAngle.fromUnit(AngleUnit.RADIANS, Math.atan2(-ftcPose.x, ftcPose.y));
         ftcPose.elevation = outputUnitsAngle.fromUnit(AngleUnit.RADIANS, Math.atan2(ftcPose.z, ftcPose.y));
 
-        return ftcPose;
+        return ftcPose;*/
+        return null;
     }
 }

@@ -1,72 +1,90 @@
 package org.firstinspires.ftc.teamcode.demos;
 
-import static org.firstinspires.ftc.teamcode.helpers.RelativePoseFinder.findPose;
-
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.helpers.AprilDet;
+import org.firstinspires.ftc.teamcode.helpers.PropAprilDet;
+import org.firstinspires.ftc.teamcode.helpers.apriltag.Globalpositioning;
+import org.firstinspires.ftc.teamcode.helpers.apriltag.global_position;
+import org.firstinspires.ftc.teamcode.robot.boats.Bert;
 import org.firstinspires.ftc.teamcode.vision.BotVision;
-import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.openftc.apriltag.AprilTagDetection;
 
 import java.util.ArrayList;
 
 @TeleOp
+@Config
 public class WebcamDemo extends LinearOpMode {
+    public static int tagID = 1;
+    public static double d = 0;
+    public static double r = 3;
+    public static double x = 1;
+    public static double y = 1;//3.2216;
+    public static double xp = 0;
+    public static double yp = 0;//-131.3;
     private BotVision bv = new BotVision();
+    global_position gp;
     @Override
     public void runOpMode() throws InterruptedException {
         Telemetry tele = FtcDashboard.getInstance().getTelemetry();
+        Bert b = new Bert();
+        b.init(hardwareMap);
         // simple class for viewing camera feed and testing processors
-        AprilDet ad = new AprilDet();
-        ad.init(hardwareMap, "Webcam 1");
+        PropAprilDet ad = new PropAprilDet();
+        ad.init(hardwareMap, "Back", true
+        );
+        b.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        tele.addData("DEBUG", "inited");
+        tele.update();
         waitForStart();
-        while (opModeIsActive()){
-            try{
-                ArrayList<AprilTagDetection> dets = ad.getDetected();
-                if (dets == null) continue;
-                for (AprilTagDetection i : dets) {
-                    if (i.id == 5) {
-                        tele.addData("center x", i.center.x);
-                        tele.addData("center y", i.center.y);
-                        tele.addData("id", i.id);
-                        tele.addData("decisionMargin", i.decisionMargin);
-                        tele.addData("hamming", i.hamming);
-                        tele.addData("pose z", i.pose.z);
-                        tele.addData("pose x", i.pose.x);
-                        tele.addData("pose y", i.pose.y);
-                        Orientation orientation = Orientation.getOrientation(i.pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.RADIANS);
-                        tele.addData("pose firstAngle", orientation.firstAngle); // rl
-                        tele.addData("pose secondAngle", orientation.secondAngle); // updown
-                        tele.addData("pose thirdAngle", orientation.thirdAngle); // roll
 
-                        AprilTagPoseFtc ftcDet = findPose(i);
-                        tele.addData("supposed x", ftcDet.x);
-                        tele.addData("supposed y", ftcDet.y);
-                        tele.addData("supposed z", ftcDet.z);
-                        tele.addData("supposed roll", ftcDet.roll);
-                        tele.addData("supposed pitch", ftcDet.pitch);
-                        tele.addData("supposed yaw", ftcDet.yaw);
-                        tele.addData("supposed range", ftcDet.range * 1/0.0254); //53.75/0.533 far 34/0.344
-                        tele.addData("supposed x offset", (ftcDet.range * 1/0.0254) * Math.cos(ftcDet.elevation) * Math.cos(ftcDet.yaw));
-                        tele.addData("supposed z offset", (ftcDet.range * 1/0.0254) * Math.cos(ftcDet.elevation) * Math.sin(ftcDet.yaw));
-                        tele.addData("supposed bearing", ftcDet.bearing);
-                        tele.addData("supposed elevation", ftcDet.elevation);
-                        tele.update();
-                    }
+        while (opModeIsActive()) {
+            if (gamepad1.a) ad.setWeBeProppin(true);
+            if (gamepad1.b) ad.setWeBeProppin(false);
+            b.motorDriveXYVectors(gamepad1.left_stick_x,-gamepad1.left_stick_y,gamepad1.right_stick_x);
+            tele.addData("DEBUG", "vectors");
+            tele.update();
+            ArrayList<AprilTagDetection> dets = ad.getDetected();
+            tele.addData("DEBUG", "detected");
+            tele.update();
+            if (dets == null) continue;
+            double totalX = 0;
+            double totalY = 0;
+            double totalR = 0;
+            double totalRX = 0;
+            double totalRY = 0;
+            double totalZ = 0;
+            for (AprilTagDetection i : dets) {
+                gp = Globalpositioning.find_global_pose(i);
+                totalX += gp.global_x;
+                totalY += gp.global_y;
+                totalR += gp.rotation_z;
+                totalRX += gp.rotation_x;
+                totalRY += gp.rotation_y;
+                totalZ += gp.global_z;
             }
-            }
-            catch (Exception e) {
-                tele.addData("ERR!", e.getMessage());
-                tele.update();
-            }
+            double avgX = totalX/dets.size();
+            double avgY = totalY/dets.size();
+            double avgR = totalR/dets.size();
+            double avgRX = totalRX/dets.size();
+            double avgRY = totalRY/dets.size();
+            double avgZ = totalZ/dets.size();
+
+            tele.addData("x", avgX);
+            tele.addData("y", avgY);
+            tele.addData("r", avgR);
+            tele.addData("z", avgZ);
+            tele.addData("rx", avgRX);
+            tele.addData("ry", avgRY);
+            tele.update();
         }
+
+        bv.webcam.closeCameraDevice();
+
+
     }
 }

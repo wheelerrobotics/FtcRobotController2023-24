@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.vision.pipelines.PropDetector;
 
 @TeleOp
 @Config
+@Disabled
 public class PushbotPixelPlacerRB extends LinearOpModeDebug {
     public static double handBasePos = 0.58;
     public static double handPushPos = 0.82;

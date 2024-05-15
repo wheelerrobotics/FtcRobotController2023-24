@@ -34,18 +34,17 @@
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
 import android.util.Size;
-
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 import java.util.Locale;
 
-/**
- * This Utility OpMode helps calibrate a webcam or RC phone camera, useful for AprilTag pose estimation
+/*
+ * This OpMode helps calibrate a webcam or RC phone camera, useful for AprilTag pose estimation
  * with the FTC VisionPortal.   It captures a camera frame (image) and stores it on the Robot Controller
  * (Control Hub or RC phone), with each press of the gamepad button X (or Square).
  * Full calibration instructions are here:
@@ -53,14 +52,13 @@ import java.util.Locale;
  *  https://ftc-docs.firstinspires.org/camera-calibration
  *
  * In Android Studio, copy this class into your "teamcode" folder with a new name.
- * Remove or comment out the @Disabled line to add this file to the Driver Station OpMode list.
+ * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  *
- * In OnBot Java, use "Add File" to add this file from the list of Samples.
+ * In OnBot Java, use "Add File" to add this OpMode from the list of Samples.
  */
 
 @TeleOp(name = "Utility: Camera Frame Capture", group = "Utility")
-public class UtilityCameraFrameCapture extends LinearOpMode
-{
+public class UtilityCameraFrameCapture extends LinearOpMode {
     /*
      * EDIT THESE PARAMETERS AS NEEDED
      */
@@ -75,31 +73,25 @@ public class UtilityCameraFrameCapture extends LinearOpMode
     long capReqTime;
 
     @Override
-    public void runOpMode()
-    {
+    public void runOpMode() {
         VisionPortal portal;
 
-        if (USING_WEBCAM)
-        {
+        if (USING_WEBCAM) {
             portal = new VisionPortal.Builder()
                     .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
                     .setCameraResolution(new Size(RESOLUTION_WIDTH, RESOLUTION_HEIGHT))
                     .build();
-        }
-        else
-        {
+        } else {
             portal = new VisionPortal.Builder()
                     .setCamera(INTERNAL_CAM_DIR)
                     .setCameraResolution(new Size(RESOLUTION_WIDTH, RESOLUTION_HEIGHT))
                     .build();
         }
 
-        while (!isStopRequested())
-        {
+        while (!isStopRequested()) {
             boolean x = gamepad1.x;
 
-            if (x && !lastX)
-            {
+            if (x && !lastX) {
                 portal.saveNextFrameRaw(String.format(Locale.US, "CameraFrameCapture-%06d", frameCount++));
                 capReqTime = System.currentTimeMillis();
             }
@@ -111,13 +103,11 @@ public class UtilityCameraFrameCapture extends LinearOpMode
             telemetry.addLine(" > Press X (or Square) to capture a frame");
             telemetry.addData(" > Camera Status", portal.getCameraState());
 
-            if (capReqTime != 0)
-            {
+            if (capReqTime != 0) {
                 telemetry.addLine("\nCaptured Frame!");
             }
 
-            if (capReqTime != 0 && System.currentTimeMillis() - capReqTime > 1000)
-            {
+            if (capReqTime != 0 && System.currentTimeMillis() - capReqTime > 1000) {
                 capReqTime = 0;
             }
 
