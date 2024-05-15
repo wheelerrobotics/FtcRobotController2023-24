@@ -1,4 +1,4 @@
-/* Copyright (c) 2017 FIRST. All rights reserved.
+/* Copyright (c) 2024 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided that
@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 /*
+<<<<<<<< HEAD:FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorTouch.java
  * This OpMode demonstrates how to use a REV Robotics Touch Sensor, REV Robotics Magnetic Limit Switch, or other device
  * that implements the TouchSensor interface. Any touch sensor that connects its output to ground when pressed
  * (known as "active low") can be configured as a "REV Touch Sensor". This includes REV's Magnetic Limit Switch.
@@ -43,33 +44,65 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
  *
  * A REV Robotics Touch Sensor must be configured on digital port number 1, 3, 5, or 7.
  * A Magnetic Limit Switch can be configured on any digital port.
+========
+ * This OpMode demonstrates how to use a digital channel.
+ *
+ * The OpMode assumes that the digital channel is configured with a name of "digitalTouch".
+>>>>>>>> 1da45a36c64d1ea3d31f08ca42ce52155dcf57e1:FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorDigitalTouch.java
  *
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
+<<<<<<<< HEAD:FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorTouch.java
 @TeleOp(name = "Sensor: REV touch sensor", group = "Sensor")
 @Disabled
 public class SensorTouch extends LinearOpMode {
     TouchSensor touchSensor;  // Touch sensor Object
+========
+@TeleOp(name = "Sensor: digital channel", group = "Sensor")
+@Disabled
+public class SensorDigitalTouch extends LinearOpMode {
+    DigitalChannel digitalTouch;  // Digital channel Object
+>>>>>>>> 1da45a36c64d1ea3d31f08ca42ce52155dcf57e1:FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorDigitalTouch.java
 
     @Override
     public void runOpMode() {
 
         // get a reference to our touchSensor object.
+<<<<<<<< HEAD:FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorTouch.java
         touchSensor = hardwareMap.get(TouchSensor.class, "sensor_touch");
+========
+        digitalTouch = hardwareMap.get(DigitalChannel.class, "digitalTouch");
+
+        digitalTouch.setMode(DigitalChannel.Mode.INPUT);
+        telemetry.addData("DigitalTouchSensorExample", "Press start to continue...");
+        telemetry.update();
+>>>>>>>> 1da45a36c64d1ea3d31f08ca42ce52155dcf57e1:FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorDigitalTouch.java
 
         // wait for the start button to be pressed.
         waitForStart();
 
+<<<<<<<< HEAD:FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorTouch.java
         // while the OpMode is active, loop and read whether the sensor is being pressed.
+========
+        // while the OpMode is active, loop and read the digital channel.
+>>>>>>>> 1da45a36c64d1ea3d31f08ca42ce52155dcf57e1:FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorDigitalTouch.java
         // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
         while (opModeIsActive()) {
 
+            // button is pressed if value returned is LOW or false.
             // send the info back to driver station using telemetry function.
+<<<<<<<< HEAD:FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorTouch.java
             if (touchSensor.isPressed()) {
                 telemetry.addData("Touch Sensor", "Is Pressed");
             } else {
                 telemetry.addData("Touch Sensor", "Is Not Pressed");
+========
+            if (digitalTouch.getState() == false) {
+                telemetry.addData("Button", "PRESSED");
+            } else {
+                telemetry.addData("Button", "NOT PRESSED");
+>>>>>>>> 1da45a36c64d1ea3d31f08ca42ce52155dcf57e1:FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorDigitalTouch.java
             }
 
             telemetry.update();
